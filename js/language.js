@@ -27,6 +27,11 @@ const translations = {
     nav_search: "Search",
     nav_brand: "Innovation & Computing Club",
 
+    // Shared data states (used by JS-rendered dynamic sections)
+    common_loading: "Loading…",
+    common_empty: "No data available.",
+    common_error: "Something went wrong. Please try again.",
+
     // Home — hero
     hero_eyebrow: "Jordan University of Science and Technology · Student Organization",
     hero_title_line1: "Innovation & Computing Club",
@@ -165,6 +170,11 @@ const translations = {
     nav_home: "الرئيسية",
     nav_requirements: "المتطلبات الأكاديمية",
     nav_majors: "التخصصات",
+
+    // Shared data states (used by JS-rendered dynamic sections)
+    common_loading: "جاري التحميل...",
+    common_empty: "لا توجد بيانات حالياً.",
+    common_error: "حدث خطأ. حاول مرة أخرى.",
     nav_search: "بحث",
     nav_brand: "نادي الابتكار والحوسبة",
 
