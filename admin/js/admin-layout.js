@@ -1,0 +1,2 @@
+import { signOutAdmin } from '../../js/auth.js';
+document.querySelector('[data-menu]')?.addEventListener('click',()=>document.querySelector('.admin-side').classList.toggle('open'));document.querySelector('[data-logout]')?.addEventListener('click',async()=>{await signOutAdmin();location.replace('login.html');});document.querySelector('[data-lang-admin]')?.addEventListener('click',()=>{const ar=document.documentElement.lang!=='ar';document.documentElement.lang=ar?'ar':'en';document.documentElement.dir=ar?'rtl':'ltr';localStorage.setItem('icc-lang',ar?'ar':'en');});

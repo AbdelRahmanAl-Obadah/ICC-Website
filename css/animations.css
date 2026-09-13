@@ -1,0 +1,148 @@
+/* ==========================================================================
+   ICC — Phase 2 visual polish layer
+   Additive only: does not override Phase 1 tokens, only enhances them with
+   motion, depth and a few gradient/glow accents. Respects prefers-reduced-motion.
+   ========================================================================== */
+
+:root {
+  --icc-blue-glow: rgba(56, 159, 255, 0.35);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Subtle animated gradient wash behind the hero, purely decorative */
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(600px circle at 15% 20%, var(--icc-blue-glow), transparent 60%),
+    radial-gradient(500px circle at 85% 80%, rgba(56,159,255,0.18), transparent 55%);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: icc-drift 18s ease-in-out infinite alternate;
+  z-index: 0;
+}
+.hero > * { position: relative; z-index: 1; }
+
+@keyframes icc-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(2%, -3%) scale(1.06); }
+}
+
+/* Reveal-on-scroll: elements get this class via IntersectionObserver (see ui.js) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal-delay="1"] { transition-delay: 80ms; }
+[data-reveal-delay="2"] { transition-delay: 160ms; }
+[data-reveal-delay="3"] { transition-delay: 240ms; }
+[data-reveal-delay="4"] { transition-delay: 320ms; }
+
+/* Lift + glow on interactive cards */
+.quick-card,
+.major-card,
+.subject-card,
+.featured-card,
+.gpa-card,
+.admin-card {
+  transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out), border-color 260ms var(--ease-out);
+  will-change: transform;
+}
+.quick-card:hover,
+.major-card:hover,
+.subject-card:hover,
+.featured-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -14px rgba(20, 23, 26, 0.22);
+  border-color: var(--icc-blue);
+}
+
+/* Buttons: soft press + shine sweep on primary */
+.btn { position: relative; overflow: hidden; }
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.35) 45%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 550ms ease;
+}
+.btn--primary:hover::after { transform: translateX(120%); }
+.btn:active { transform: scale(0.97); }
+
+/* Nav underline animation */
+.nav__link {
+  position: relative;
+}
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 2px;
+  background: var(--icc-blue);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms var(--ease-out);
+}
+.nav__link:hover::after,
+.nav__link[aria-current="page"]::after,
+.nav__link.is-active::after {
+  transform: scaleX(1);
+}
+
+/* Logo tiny float */
+.nav__logo { transition: transform 300ms var(--ease-out); }
+.nav__brand:hover .nav__logo { transform: translateY(-1px) scale(1.02); }
+
+/* Page load fade */
+body { animation: icc-fade-in 420ms var(--ease-out); }
+@keyframes icc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Number counters (hero panel stats) get a gentle pop */
+.hero__panel-row { transition: background-color 220ms ease; }
+.hero__panel-row:hover { background-color: var(--icc-blue-tint); }
+.hero__panel-num { transition: color 220ms ease; }
+.hero__panel-row:hover .hero__panel-num { color: var(--icc-blue); }
+
+/* Loading spinner used across Firestore-driven pages */
+.icc-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--icc-gray);
+  border-top-color: var(--icc-blue);
+  animation: icc-spin 700ms linear infinite;
+  margin-inline: auto;
+}
+@keyframes icc-spin { to { transform: rotate(360deg); } }
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero::before,
+  body,
+  .icc-spinner { animation: none !important; }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .quick-card:hover,
+  .major-card:hover,
+  .subject-card:hover,
+  .featured-card:hover {
+    transform: none;
+  }
+}

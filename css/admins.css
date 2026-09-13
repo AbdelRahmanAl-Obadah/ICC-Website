@@ -1,0 +1,71 @@
+/* ==========================================================================
+   ICC Admins — directory page
+   ========================================================================== */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gutter);
+}
+
+.admin-card {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: var(--shadow-card);
+  padding: 26px 22px;
+  text-align: center;
+}
+
+.admin-card__avatar {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  background: linear-gradient(135deg, hsl(var(--avatar-hue, 205) 70% 55%), hsl(calc(var(--avatar-hue, 205) + 30) 70% 42%));
+}
+
+.admin-card h3 {
+  margin: 0 0 4px;
+  font-size: var(--step-0);
+}
+
+.admin-card__role {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--icc-blue-dim);
+  background: var(--icc-blue-tint);
+  border-radius: 20px;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.admin-card__note {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.admins-note {
+  margin-top: 40px;
+  border: 1px dashed var(--icc-gray);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  background: var(--icc-gray-soft);
+}
+.admins-note h4 { margin: 0 0 8px; }
+.admins-note p { margin: 0; max-width: 60ch; margin-inline: auto; }
+
+@media (max-width: 900px) {
+  .admin-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
