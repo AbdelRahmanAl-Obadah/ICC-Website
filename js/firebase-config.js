@@ -10,9 +10,9 @@
  * Replace every "YOUR_..." value with the config object from:
  * Firebase Console → Project settings → General → Your apps → SDK setup.
  *
- * This file is imported by firebase-init.js. Nothing in PHASE 1 actually
+ * This file is imported by firebase-init.js. Once real project credentials
  * calls Firebase yet — this only establishes the structure so later
- * phases (Auth, Firestore CRUD) can build on it without refactoring.
+ * are set below, Auth and Firestore features activate automatically.
  * ------------------------------------------------------------------------
  */
 

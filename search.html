@@ -64,7 +64,7 @@
     <div class="container">
       <p class="hero__eyebrow" data-i18n="search_index">04</p>
       <h1 style="font-size: clamp(2rem, 4.4vw, 3.2rem); max-width: 22ch;" data-i18n="search_title">Search the platform</h1>
-      <p class="hero__desc" data-i18n="search_lede">Global search across majors, requirements and subjects arrives with Firestore in a later phase. This is the interface.</p>
+      <p class="hero__desc" data-i18n="search_lede">Search across every major, requirement and subject in one place.</p>
     </div>
   </section>
 
@@ -87,7 +87,7 @@
         <div class="state" data-state="empty">
           <div class="state__icon" aria-hidden="true">⌕</div>
           <strong data-i18n="state_empty_title">Nothing here yet</strong>
-          <p data-i18n="state_empty_body">This section will populate once Firestore data is connected in a later phase.</p>
+          <p data-i18n="state_empty_body">Results will appear here as you search.</p>
         </div>
         <div class="state" data-state="loading" hidden>
           <div class="spinner" aria-hidden="true"></div>
@@ -132,13 +132,14 @@
     </div>
     <div class="footer__bottom">
       <span data-i18n="footer_copyright">© 2026 Innovation & Computing Club, Jordan University of Science and Technology. Built by students.</span>
-      <span>ICC-Website · Phase 2 of 5</span>
+      <span>ICC-Website</span>
     </div>
   </div>
 </footer>
 
 <script src="js/language.js"></script>
 <script src="js/ui.js"></script>
+<script type="module" src="js/site-content.js"></script>
 <script type="module" src="js/firebase-init.js"></script>
 <script type="module">
   // Real client-side search across the actual public Firestore dataset —

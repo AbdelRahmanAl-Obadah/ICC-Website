@@ -22,7 +22,7 @@
   This is the ONE reusable template for every major. It is loaded as
   major.html?id=<major-id> (see js/majors.js → getMajorIdFromURL()).
   Do NOT create a separate HTML file per major (no computer-science.html,
-  no cyber-security.html). In Phase 2+, js/majors.js and js/subjects.js
+  no cyber-security.html). js/majors.js and js/subjects.js
   swap their demo-data calls for real Firestore reads, and this markup
   stays the same.
 -->
@@ -152,13 +152,14 @@
     </div>
     <div class="footer__bottom">
       <span data-i18n="footer_copyright">© 2026 Innovation & Computing Club, Jordan University of Science and Technology. Built by students.</span>
-      <span>ICC-Website · Phase 2 of 5</span>
+      <span>ICC-Website</span>
     </div>
   </div>
 </footer>
 
 <script src="js/language.js"></script>
 <script src="js/ui.js"></script>
+<script type="module" src="js/site-content.js"></script>
 <script type="module" src="js/majors.js"></script>
 <script type="module" src="js/subjects.js"></script>
 </body>

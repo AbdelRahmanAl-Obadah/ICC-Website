@@ -8,10 +8,10 @@
  * Uses the Firebase modular (v9+) SDK loaded from the CDN as ES modules,
  * so no build step or npm install is required for this static site.
  *
- * NOTE: This module is written defensively for PHASE 1. Because
+ * NOTE: This module is written defensively. Because
  * firebase-config.js still contains placeholder values, initializeApp()
  * is wrapped in a try/catch so pages that don't need Firebase yet
- * (every page in this phase) never break if the config hasn't been
+ * pages never break if the config hasn't been
  * filled in. Once real config values are added, this becomes a normal,
  * unguarded Firebase bootstrap.
  * ------------------------------------------------------------------------
@@ -35,7 +35,7 @@ if (!isPlaceholderConfig) {
   db = getFirestore(app);
   auth = getAuth(app);
 } else {
-  // Expected in PHASE 1 — no real project is connected yet.
+  // No real project connected yet — add credentials in firebase-config.js.
   console.info(
     "[ICC] Firebase config is still a placeholder. Add real values to " +
       "js/firebase-config.js before Firestore/Auth features are used."

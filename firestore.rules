@@ -1,15 +1,81 @@
 rules_version = '2';
-service cloud.firestore { match /databases/{database}/documents {
-  function isAdmin(){return request.auth!=null && exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && (get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='admin' || get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='superadmin') && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active==true;}
-  function isSuperAdmin(){return isAdmin() && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='superadmin';}
-  function canManage(area){return isSuperAdmin() || (isAdmin() && area in get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.permissions);}
-  function publicOrAdmin(){return isAdmin()||resource.data.active==true;}
-  match /majors/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
-  match /semesters/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
-  match /subjects/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
-  match /requirements/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
-  match /siteContent/{id}{allow read:if isAdmin()||resource.data.active!=false;allow create,update,delete:if canManage('content');}
-  match /settings/{id}{allow read:if isAdmin()||resource.data.maintenanceMode!=true;allow create,update,delete:if canManage('settings');}
-  match /admins/{uid}{allow read:if isAdmin() || (request.auth!=null&&request.auth.uid==uid);allow create,delete:if isSuperAdmin();allow update:if isSuperAdmin() && uid != request.auth.uid;}
-  match /{document=**}{allow read,write:if false;}
-}}
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function adminDoc(){ return get(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    function isSignedIn(){ return request.auth != null; }
+    function isApprovedAdmin(){
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && adminDoc().data.active == true
+        && (adminDoc().data.role == 'admin' || adminDoc().data.role == 'superadmin');
+    }
+    function isSuperAdmin(){ return isApprovedAdmin() && adminDoc().data.role == 'superadmin'; }
+    // Fine-grained: a Super administrator can always manage everything.
+    // A regular administrator needs the exact permission key granted to
+    // them on the "Team & access" page (see admin/js/admin-permissions.js
+    // for the full list of keys — they must match exactly).
+    function canManage(permissionKey){
+      return isSuperAdmin() || (isApprovedAdmin() && permissionKey in adminDoc().data.permissions);
+    }
+    function publicOrAdmin(){ return isApprovedAdmin() || resource.data.active == true; }
+
+    match /majors/{id}{
+      allow read: if publicOrAdmin();
+      allow create, update, delete: if canManage('majors');
+    }
+    match /semesters/{id}{
+      allow read: if publicOrAdmin();
+      allow create, update, delete: if canManage('semesters');
+    }
+    match /subjects/{id}{
+      allow read: if publicOrAdmin();
+      allow create, update, delete: if canManage('subjects');
+    }
+    match /requirements/{id}{
+      allow read: if publicOrAdmin();
+      allow create, update, delete: if canManage('requirements');
+    }
+    match /curriculumTrees/{majorId}{
+      allow read: if true;
+      allow write: if canManage('curriculum');
+    }
+
+    match /siteContent/{id}{
+      allow read: if isApprovedAdmin() || resource.data.active != false;
+      // Any of the content-area permissions may write to this single
+      // document; the admin UI only sends the fields it owns.
+      allow create, update, delete: if canManage('content_hero') || canManage('content_about') || canManage('content_nav') || canManage('content_footer');
+    }
+
+    match /settings/{id}{
+      allow read: if isApprovedAdmin() || resource.data.maintenanceMode != true;
+      allow create, update, delete: if canManage('settings');
+    }
+
+    // Admin / team accounts.
+    // - Anyone can create their OWN account doc with role "pending" — this
+    //   is what powers self-service sign-up. They can never set their own
+    //   role to admin/superadmin or grant themselves permissions.
+    // - Only someone with the "users" permission (or a Super administrator)
+    //   can approve, edit or remove accounts.
+    match /admins/{uid}{
+      allow read: if isApprovedAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow create: if isSignedIn() && request.auth.uid == uid
+        && request.resource.data.role == 'pending'
+        && request.resource.data.active == false
+        && (!('permissions' in request.resource.data) || request.resource.data.permissions.size() == 0);
+      allow update, delete: if canManage('users') && (uid != request.auth.uid || isSuperAdmin());
+    }
+
+    // Audit log: append-only from the client. Every admin write in the
+    // app writes here via js/firestore.js — nothing else may touch it.
+    match /auditLogs/{id}{
+      allow read: if canManage('auditlog');
+      allow create: if isApprovedAdmin();
+      allow update, delete: if false;
+    }
+
+    match /{document=**}{ allow read, write: if false; }
+  }
+}

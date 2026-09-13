@@ -63,7 +63,7 @@ const translations = {
 
     // Search
     search_title: "Search the platform",
-    search_lede: "Global search across majors, requirements and subjects arrives with Firestore in a later phase. This is the interface.",
+    search_lede: "Search across every major, requirement and subject in one place.",
     search_placeholder: "Try “Data Structures” or “Cyber Security”",
     filter_all: "All",
     filter_majors: "Majors",
@@ -75,11 +75,11 @@ const translations = {
     about_title: "About ICC",
     about_index: "05",
     about_lede: "Innovation & Computing Club is a student-run organization at Jordan University of Science and Technology, focused on making academic life easier through technology.",
-    about_body: "We build the tools we wish existed as students — clear curriculum maps, organized requirements and a searchable home for everything computing students need to plan their degree. This platform is the club's flagship project, developed in phases and maintained by student contributors.",
+    about_body: "We build the tools we wish existed as students — clear curriculum maps, organized requirements and a searchable home for everything computing students need to plan their degree. This platform is the club's flagship project, maintained by student contributors.",
     about_stat_members: "Active members",
     about_stat_majors: "Majors in progress",
     about_stat_founded: "Founded",
-    about_stat_phase: "Current phase",
+    about_stat_phase: "Status",
 
     // Footer
     footer_desc: "A student-built academic resources platform for JUST's computing community.",
@@ -90,7 +90,7 @@ const translations = {
     // Requirements page
     req_page_eyebrow: "Academic Requirements",
     req_page_title: "Requirements, organized by where they come from.",
-    req_page_desc: "Every JUST computing student moves through the same three layers of requirements before specializing. Placeholder entries below stand in for the real curriculum, which will be managed through the Admin Panel in a later phase.",
+    req_page_desc: "Every JUST computing student moves through the same three layers of requirements before specializing.",
     req_electives_title: "Free Electives",
     req_electives_desc: "Open courses from any department, used to round out your degree.",
     req_university_title: "University Requirements",
@@ -109,7 +109,7 @@ const translations = {
     major_crumb_majors: "Majors",
     major_curriculum_title: "Curriculum tree",
     major_curriculum_hint: "Click to enlarge",
-    major_curriculum_note: "Placeholder image — real curriculum trees load from Google Drive in a later phase.",
+    major_curriculum_note: "Curriculum tree, maintained by the ICC team.",
     major_years_title: "Semester plan",
     year_label: "Year",
     semester_label: "Semester",
@@ -119,7 +119,7 @@ const translations = {
     // States
     state_loading: "Loading content…",
     state_empty_title: "Nothing here yet",
-    state_empty_body: "This section will populate once Firestore data is connected in a later phase.",
+    state_empty_body: "Results will appear here as you search.",
     state_error_title: "Something went wrong",
     state_error_body: "We couldn't load this content. Please try again shortly.",
 
@@ -153,7 +153,7 @@ const translations = {
     // Admins page
     admins_eyebrow: "Behind the platform",
     admins_title: "ICC Admins",
-    admins_desc: "The students who keep ICC's academic data accurate and the platform running. Full admin sign-in and content management arrive in Phase 3 — this page is a public directory only.",
+    admins_desc: "The students who keep ICC's academic data accurate and the platform running.",
     admin_role_lead: "Platform Lead",
     admin_role_lead_desc: "Oversees content accuracy across majors, semesters and requirements.",
     admin_role_dev: "Lead Developer",
@@ -163,7 +163,7 @@ const translations = {
     admin_role_design: "Design & UX Admin",
     admin_role_design_desc: "Keeps the interface consistent, accessible and bilingual.",
     admins_join_title: "Want to help maintain ICC?",
-    admins_join_desc: "Admin accounts, roles and permissions will be managed through Firebase Authentication starting in Phase 3. Reach out to the club to get involved.",
+    admins_join_desc: "Admin accounts, roles and permissions are managed through Firebase Authentication. Reach out to the club to get involved.",
   },
 
   ar: {
@@ -220,7 +220,7 @@ const translations = {
     about_stat_members: "أعضاء نشطون",
     about_stat_majors: "تخصصات قيد الإعداد",
     about_stat_founded: "تأسس",
-    about_stat_phase: "المرحلة الحالية",
+    about_stat_phase: "الحالة",
 
     footer_desc: "منصة موارد أكاديمية بناها الطلاب لمجتمع الحوسبة في جامعة العلوم والتكنولوجيا الأردنية.",
     footer_nav: "روابط",

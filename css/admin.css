@@ -271,6 +271,63 @@ label{font-weight:600;font-size:13.5px;color:var(--ink)}
 
 .state--error{background:var(--red-bg);color:var(--red-fg);padding:16px 18px;border-radius:var(--radius-sm);font-size:14px}
 
+/* ---------- repeaters (nav links / footer links) ---------- */
+.repeater{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.repeater-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:center}
+.repeater-row input{width:100%}
+.repeater-row .icon-btn{padding:9px 12px;line-height:1;font-size:16px;font-weight:700}
+
+/* ---------- tabs (login sign-in / create account, etc.) ---------- */
+.tabs{display:flex;gap:4px;background:var(--soft);border-radius:99px;padding:4px;margin-bottom:20px}
+.tabs button{flex:1;border:0;background:none;padding:9px 14px;border-radius:99px;font-weight:700;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .15s ease}
+.tabs button.active{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
+.tab-panel[hidden]{display:none}
+
+/* ---------- badges ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+.badge.pending{background:#FFF3D6;color:#9A6700}
+.badge.superadmin{background:#EAF4FF;color:var(--blue-dim)}
+.badge.admin{background:#EFEFF3;color:var(--ink-soft)}
+
+/* ---------- permission matrix (grouped checkboxes) ---------- */
+.permission-matrix{display:grid;gap:16px}
+.permission-matrix fieldset{border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;margin:0}
+.permission-matrix legend{font-weight:700;padding:0 6px;font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+.permission-matrix label{font-weight:400;display:flex;gap:9px;align-items:flex-start;padding:6px 0;font-size:13.5px}
+.permission-matrix input[type="checkbox"]{margin-top:3px}
+
+/* ---------- pending approvals ---------- */
+.approval-card{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--blue-tint);border:1px solid #cfe6ff;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;flex-wrap:wrap}
+.approval-card strong{display:block}
+.approval-card small{color:var(--ink-soft)}
+
+/* ---------- audit log timeline ---------- */
+.audit-list{display:flex;flex-direction:column;gap:0}
+.audit-item{display:grid;grid-template-columns:34px 1fr auto;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line)}
+.audit-item:last-child{border-bottom:0}
+.audit-dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--blue)}
+.audit-dot.delete{background:#c72c41}
+.audit-dot.create{background:#177245}
+.audit-item h4{margin:0 0 3px;font-size:14px}
+.audit-item p{margin:0;color:var(--ink-soft);font-size:13px}
+.audit-item time{color:var(--ink-faint);font-size:12px;white-space:nowrap}
+.audit-diff{margin-top:8px;font-family:var(--font-body);font-size:12.5px;background:var(--soft);border-radius:var(--radius-sm);padding:10px 12px;display:none;overflow:auto}
+.audit-diff.open{display:block}
+.audit-diff code{white-space:pre-wrap;word-break:break-word}
+
+/* ---------- curriculum tree builder ---------- */
+.tree-mode-switch{display:flex;gap:10px;margin-bottom:18px}
+.tree-canvas{border:1px dashed var(--gray);border-radius:var(--radius);padding:20px;min-height:220px;background:var(--soft)}
+.tree-node{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow-sm)}
+.tree-node[data-depth="1"]{margin-inline-start:26px}
+.tree-node[data-depth="2"]{margin-inline-start:52px}
+.tree-node input{flex:1}
+.dropzone{border:2px dashed var(--gray);border-radius:var(--radius);padding:36px 20px;text-align:center;color:var(--ink-soft);cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.dropzone:hover,.dropzone.drag{border-color:var(--blue);background:var(--blue-tint)}
+.dropzone svg{width:30px;height:30px;margin-bottom:8px;color:var(--ink-faint)}
+.file-preview{display:flex;align-items:center;gap:12px;margin-top:14px}
+.file-preview img{max-width:220px;border-radius:var(--radius-sm);border:1px solid var(--line)}
+
 /* ---------- responsive ---------- */
 @media (max-width:980px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -290,4 +347,7 @@ label{font-weight:600;font-size:13.5px;color:var(--ink)}
   .admin-head{flex-direction:column;align-items:stretch}
   .content-actions{align-items:stretch;flex-direction:column}
   .content-actions .btn{width:100%}
+  .repeater-row{grid-template-columns:1fr}
+  .audit-item{grid-template-columns:20px 1fr}
+  .audit-item time{grid-column:2;margin-top:-6px}
 }
