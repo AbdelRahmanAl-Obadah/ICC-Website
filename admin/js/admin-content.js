@@ -1,0 +1,6 @@
+import { requireAdmin } from './admin-guard.js';
+import { getSiteContent, updateSiteContent } from '../../js/firestore.js';
+const form=document.querySelector('[data-content-form]'),notice=document.querySelector('[data-notice]'),submit=form.querySelector('[type="submit"]');
+const say=(message,type='success')=>{notice.textContent=message;notice.className=`notice ${type}`;};
+requireAdmin(async()=>{try{const content=await getSiteContent();for(const[key,value]of Object.entries(content))if(form.elements[key]&&typeof value==='string')form.elements[key].value=value;document.querySelector('[data-content-app]').hidden=false;}catch(error){console.error(error);say(error.message||'Website content could not be loaded.','error');}},'content');
+form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;submit.disabled=true;submit.textContent='Saving…';try{await updateSiteContent(Object.fromEntries(new FormData(form)));say('Website content saved successfully. Refresh the public-site preview to see the changes.');}catch(error){console.error(error);say(error.message||'Could not save website content.','error');}finally{submit.disabled=false;submit.textContent='Save website content';}});

@@ -1,0 +1,5 @@
+import { fetchRequirements } from './firestore.js';
+const esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+let records=[];
+function render(){const lang=window.ICC_I18N.getStoredLang();document.querySelectorAll('[data-requirements]').forEach(node=>{const rows=records.filter(x=>x.category===node.dataset.requirements);node.innerHTML=rows.length?rows.map(x=>`<div class="requirement-row"><span class="requirement-row__name">${esc(x.name?.[lang]||x.name?.en)}</span><span class="requirement-row__meta">${esc(x.code)} · ${esc(x.creditHours)} ${window.ICC_I18N.t('credit_hours',lang)}</span></div>`).join(''):'<div class="state state--empty">No published courses yet.</div>';});}
+document.addEventListener('DOMContentLoaded',async()=>{try{records=await fetchRequirements();render();}catch(e){console.error(e);document.querySelectorAll('[data-requirements]').forEach(x=>x.innerHTML='<div class="state state--error">Unable to load requirements.</div>');}});document.addEventListener('icc:languagechange',render);

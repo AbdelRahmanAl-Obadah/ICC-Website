@@ -1,13 +1,15 @@
 rules_version = '2';
 service cloud.firestore { match /databases/{database}/documents {
-  function isAdmin(){return request.auth!=null && exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='admin' && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active==true;}
+  function isAdmin(){return request.auth!=null && exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && (get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='admin' || get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='superadmin') && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active==true;}
+  function isSuperAdmin(){return isAdmin() && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role=='superadmin';}
+  function canManage(area){return isSuperAdmin() || (isAdmin() && area in get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.permissions);}
   function publicOrAdmin(){return isAdmin()||resource.data.active==true;}
-  match /majors/{id}{allow read:if publicOrAdmin();allow create,update,delete:if isAdmin();}
-  match /semesters/{id}{allow read:if publicOrAdmin();allow create,update,delete:if isAdmin();}
-  match /subjects/{id}{allow read:if publicOrAdmin();allow create,update,delete:if isAdmin();}
-  match /requirements/{id}{allow read:if publicOrAdmin();allow create,update,delete:if isAdmin();}
-  match /siteContent/{id}{allow read:if isAdmin()||resource.data.active!=false;allow create,update,delete:if isAdmin();}
-  match /settings/{id}{allow read:if isAdmin()||resource.data.maintenanceMode!=true;allow create,update,delete:if isAdmin();}
-  match /admins/{uid}{allow read:if request.auth!=null&&request.auth.uid==uid;allow write:if false;}
+  match /majors/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
+  match /semesters/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
+  match /subjects/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
+  match /requirements/{id}{allow read:if publicOrAdmin();allow create,update,delete:if canManage('academics');}
+  match /siteContent/{id}{allow read:if isAdmin()||resource.data.active!=false;allow create,update,delete:if canManage('content');}
+  match /settings/{id}{allow read:if isAdmin()||resource.data.maintenanceMode!=true;allow create,update,delete:if canManage('settings');}
+  match /admins/{uid}{allow read:if isAdmin() || (request.auth!=null&&request.auth.uid==uid);allow create,delete:if isSuperAdmin();allow update:if isSuperAdmin() && uid != request.auth.uid;}
   match /{document=**}{allow read,write:if false;}
 }}

@@ -124,6 +124,7 @@ const translations = {
     // Nav — new pages
     nav_gpa: "GPA Calculator",
     nav_admins: "ICC Admins",
+    nav_admin_panel: "Admin Panel",
 
     // GPA calculator
     gpa_eyebrow: "Student tool",
@@ -253,6 +254,7 @@ const translations = {
     // Nav — new pages
     nav_gpa: "حاسبة المعدل",
     nav_admins: "مشرفو ICC",
+    nav_admin_panel: "لوحة الإدارة",
 
     // GPA calculator
     gpa_eyebrow: "أداة للطلاب",

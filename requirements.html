@@ -76,7 +76,7 @@
           <span class="tag tag--demo" data-i18n="demo_label">Demo entry — not official academic data</span>
         </div>
         <p style="padding: 16px 24px 0;" data-i18n="req_electives_desc">Open courses from any department, used to round out your degree.</p>
-        <div class="requirement-list">
+        <div class="requirement-list" data-requirements="free-elective">
           <div class="requirement-row">
             <span class="requirement-row__name">Introduction to Psychology</span>
             <span class="requirement-row__meta">PSY101 · 3 <span data-i18n="credit_hours">credit hours</span></span>
@@ -102,7 +102,7 @@
           <span class="tag tag--demo" data-i18n="demo_label">Demo entry — not official academic data</span>
         </div>
         <p style="padding: 16px 24px 0;" data-i18n="req_university_desc">Shared foundation courses required across all JUST programmes.</p>
-        <div class="requirement-list">
+        <div class="requirement-list" data-requirements="university">
           <div class="requirement-row">
             <span class="requirement-row__name">Arabic Language Skills</span>
             <span class="requirement-row__meta">ARB100 · 2 <span data-i18n="credit_hours">credit hours</span></span>
@@ -128,7 +128,7 @@
           <span class="tag tag--demo" data-i18n="demo_label">Demo entry — not official academic data</span>
         </div>
         <p style="padding: 16px 24px 0;" data-i18n="req_college_desc">Requirements set by your college ahead of your major coursework.</p>
-        <div class="requirement-list">
+        <div class="requirement-list" data-requirements="college">
           <div class="requirement-row">
             <span class="requirement-row__name">Engineering Drawing</span>
             <span class="requirement-row__meta">ENGR110 · 2 <span data-i18n="credit_hours">credit hours</span></span>
@@ -163,6 +163,7 @@
           <li><a href="search.html" data-i18n="nav_search">Search</a></li>
           <li><a href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a></li>
           <li><a href="admins.html" data-i18n="nav_admins">ICC Admins</a></li>
+          <li><a href="admin/login.html" data-i18n="nav_admin_panel">Admin Panel</a></li>
         </ul>
       </div>
       <div>
@@ -183,5 +184,6 @@
 <script src="js/language.js"></script>
 <script src="js/ui.js"></script>
 <script type="module" src="js/firebase-init.js"></script>
+<script type="module" src="js/requirements.js"></script>
 </body>
 </html>

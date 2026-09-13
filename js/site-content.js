@@ -1,0 +1,4 @@
+import { getSiteContent } from './firestore.js';
+const fields = { heroTitleEn: 'hero_title_line1', heroTitleAr: 'hero_title_line1', heroDescriptionEn: 'hero_desc', heroDescriptionAr: 'hero_desc', aboutTitleEn: 'about_title', aboutTitleAr: 'about_title', aboutDescriptionEn: 'about_body', aboutDescriptionAr: 'about_body', footerEn: 'footer_desc', footerAr: 'footer_desc' };
+function apply(content) { const lang = window.ICC_I18N.getStoredLang(); for (const [field, key] of Object.entries(fields)) { if (!field.endsWith(lang === 'ar' ? 'Ar' : 'En') || !content[field]) continue; document.querySelectorAll(`[data-i18n="${key}"]`).forEach(node => node.textContent = content[field]); } }
+document.addEventListener('DOMContentLoaded', async () => { try { const content = await getSiteContent(); apply(content); document.addEventListener('icc:languagechange', () => apply(content)); } catch (error) { console.info('[ICC] Site content is unavailable.', error); } });

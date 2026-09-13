@@ -10,7 +10,7 @@ export async function getAdminProfile(user = auth?.currentUser) {
   if (!user || !db) return null;
   const snapshot = await getDoc(doc(db, 'admins', user.uid));
   const data = snapshot.exists() ? snapshot.data() : null;
-  return data?.role === 'admin' && data?.active === true ? { ...data, uid: user.uid } : null;
+  return ['admin', 'superadmin'].includes(data?.role) && data?.active === true ? { ...data, uid: user.uid } : null;
 }
 export async function isCurrentUserAdmin() { return Boolean(await getAdminProfile()); }
 export function watchAuth(callback) { configured(); return onAuthStateChanged(auth, callback); }
