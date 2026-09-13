@@ -1,6 +1,6 @@
 # ICC — Innovation & Computing Club Academic Platform
 
-A responsive academic resources platform for the **Innovation & Computing Club**, a student organization at the **German Jordanian University (GJU)**. The platform will eventually host every free elective, university/college requirement, major curriculum, semester plan and subject GJU computing students need — searchable, in one place.
+A responsive academic resources platform for the **Innovation & Computing Club**, a student organization at the **Jordan University of Science and Technology (JUST)**. The platform will eventually host every free elective, university/college requirement, major curriculum, semester plan and subject JUST computing students need — searchable, in one place.
 
 This repository is **PHASE 1 of 5**. See [What was implemented](#what-was-implemented-in-phase-1) and [What's next](#what-intentionally-remains-for-phase-2) below.
 
@@ -151,7 +151,7 @@ Arabic text automatically falls back to `--font-arabic` (`IBM Plex Sans Arabic`,
 - Real global search across majors/subjects/requirements — `search.html` UI exists, `searchPlatform()` is stubbed
 - Google Drive integration for curriculum tree images (currently a placeholder SVG)
 - Final Firestore schema and production security rules (current rules are a safe read-only baseline, not final)
-- Real GJU academic data — everything currently shown is explicitly labeled demo/placeholder content
+- Real JUST academic data — everything currently shown is explicitly labeled demo/placeholder content
 
 ## Important instructions for the next developer/AI
 
