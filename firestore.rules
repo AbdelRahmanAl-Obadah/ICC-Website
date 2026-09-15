@@ -1,81 +1,59 @@
 rules_version = '2';
+
+/**
+ * PHASE 1 — baseline Firestore security rules.
+ *
+ * This project does not read or write Firestore yet (js/firestore.js and
+ * js/auth.js are placeholders). These rules exist so the project is never
+ * left with an open database once a real Firebase project is connected.
+ *
+ * Default posture:
+ *   - Public academic content (majors, semesters, subjects, requirements)
+ *     is READ-ONLY for anyone, once those collections exist.
+ *   - ALL writes are denied until PHASE 3 introduces authenticated admin
+ *     checks (see js/auth.js). Do not relax this before that lands.
+ *
+ * PHASE 2/3 TODO:
+ *   - Replace `allow write: if false;` with an isAdmin() check backed by
+ *     either custom auth claims or an `admins/{uid}` allowlist document.
+ *   - Add rules for the `admins` collection itself (never client-writable).
+ *   - Add field-level validation once the final schema is confirmed.
+ */
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function adminDoc(){ return get(/databases/$(database)/documents/admins/$(request.auth.uid)); }
-    function isSignedIn(){ return request.auth != null; }
-    function isApprovedAdmin(){
-      return isSignedIn()
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        && adminDoc().data.active == true
-        && (adminDoc().data.role == 'admin' || adminDoc().data.role == 'superadmin');
-    }
-    function isSuperAdmin(){ return isApprovedAdmin() && adminDoc().data.role == 'superadmin'; }
-    // Fine-grained: a Super administrator can always manage everything.
-    // A regular administrator needs the exact permission key granted to
-    // them on the "Team & access" page (see admin/js/admin-permissions.js
-    // for the full list of keys — they must match exactly).
-    function canManage(permissionKey){
-      return isSuperAdmin() || (isApprovedAdmin() && permissionKey in adminDoc().data.permissions);
-    }
-    function publicOrAdmin(){ return isApprovedAdmin() || resource.data.active == true; }
-
-    match /majors/{id}{
-      allow read: if publicOrAdmin();
-      allow create, update, delete: if canManage('majors');
-    }
-    match /semesters/{id}{
-      allow read: if publicOrAdmin();
-      allow create, update, delete: if canManage('semesters');
-    }
-    match /subjects/{id}{
-      allow read: if publicOrAdmin();
-      allow create, update, delete: if canManage('subjects');
-    }
-    match /requirements/{id}{
-      allow read: if publicOrAdmin();
-      allow create, update, delete: if canManage('requirements');
-    }
-    match /curriculumTrees/{majorId}{
+    // Public academic data — readable by everyone, writable by no one yet.
+    match /majors/{majorId} {
       allow read: if true;
-      allow write: if canManage('curriculum');
+      allow write: if false;
+
+      match /semesters/{semesterId} {
+        allow read: if true;
+        allow write: if false;
+
+        match /subjects/{subjectId} {
+          allow read: if true;
+          allow write: if false;
+        }
+      }
     }
 
-    match /siteContent/{id}{
-      allow read: if isApprovedAdmin() || resource.data.active != false;
-      // Any of the content-area permissions may write to this single
-      // document; the admin UI only sends the fields it owns.
-      allow create, update, delete: if canManage('content_hero') || canManage('content_about') || canManage('content_nav') || canManage('content_footer');
+    match /requirements/{trackId} {
+      allow read: if true;
+      allow write: if false;
     }
 
-    match /settings/{id}{
-      allow read: if isApprovedAdmin() || resource.data.maintenanceMode != true;
-      allow create, update, delete: if canManage('settings');
+    // Reserved for Phase 3 admin allowlist — never client-writable.
+    match /admins/{uid} {
+      allow read: if false;
+      allow write: if false;
     }
 
-    // Admin / team accounts.
-    // - Anyone can create their OWN account doc with role "pending" — this
-    //   is what powers self-service sign-up. They can never set their own
-    //   role to admin/superadmin or grant themselves permissions.
-    // - Only someone with the "users" permission (or a Super administrator)
-    //   can approve, edit or remove accounts.
-    match /admins/{uid}{
-      allow read: if isApprovedAdmin() || (isSignedIn() && request.auth.uid == uid);
-      allow create: if isSignedIn() && request.auth.uid == uid
-        && request.resource.data.role == 'pending'
-        && request.resource.data.active == false
-        && (!('permissions' in request.resource.data) || request.resource.data.permissions.size() == 0);
-      allow update, delete: if canManage('users') && (uid != request.auth.uid || isSuperAdmin());
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read: if false;
+      allow write: if false;
     }
-
-    // Audit log: append-only from the client. Every admin write in the
-    // app writes here via js/firestore.js — nothing else may touch it.
-    match /auditLogs/{id}{
-      allow read: if canManage('auditlog');
-      allow create: if isApprovedAdmin();
-      allow update, delete: if false;
-    }
-
-    match /{document=**}{ allow read, write: if false; }
   }
 }

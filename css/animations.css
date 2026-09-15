@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ICC — visual polish layer
-   Additive only: does not override base tokens, only enhances them with
+   ICC — Phase 2 visual polish layer
+   Additive only: does not override Phase 1 tokens, only enhances them with
    motion, depth and a few gradient/glow accents. Respects prefers-reduced-motion.
    ========================================================================== */
 

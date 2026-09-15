@@ -1,6 +1,6 @@
 # ICC — Innovation & Computing Club Academic Platform
 
-A responsive academic resources platform for the **Innovation & Computing Club**, a student organization at the **Jordan University of Science and Technology (JUST)**. The platform will eventually host every free elective, university/college requirement, major curriculum, semester plan and subject JUST computing students need — searchable, in one place.
+A responsive academic resources platform for the **Innovation & Computing Club**, a student organization at the **German Jordanian University (GJU)**. The platform will eventually host every free elective, university/college requirement, major curriculum, semester plan and subject GJU computing students need — searchable, in one place.
 
 This repository is **PHASE 1 of 5**. See [What was implemented](#what-was-implemented-in-phase-1) and [What's next](#what-intentionally-remains-for-phase-2) below.
 
@@ -151,7 +151,7 @@ Arabic text automatically falls back to `--font-arabic` (`IBM Plex Sans Arabic`,
 - Real global search across majors/subjects/requirements — `search.html` UI exists, `searchPlatform()` is stubbed
 - Google Drive integration for curriculum tree images (currently a placeholder SVG)
 - Final Firestore schema and production security rules (current rules are a safe read-only baseline, not final)
-- Real JUST academic data — everything currently shown is explicitly labeled demo/placeholder content
+- Real GJU academic data — everything currently shown is explicitly labeled demo/placeholder content
 
 ## Important instructions for the next developer/AI
 
@@ -205,26 +205,4 @@ the architecture already documented above.
 
 ---
 
-## Phase 3 — Admin panel and authentication
-
-**THIS PROJECT IS PHASE 3 OF 5.** Phase 3 retains every public page and adds a protected, responsive admin workspace at `/admin/login.html`.
-
-- Firebase Email/Password and Google sign-in are implemented in `js/auth.js`.
-- Access requires an authenticated account **and** `admins/{uid}` with `role: "admin"` and `active: true`. Unauthorized users are immediately signed out.
-- The admin area includes dashboard metrics, CRUD management for majors, semesters, subjects and requirements, duplicate/status/delete safeguards, content forms, and safe public settings.
-- `firestore.rules` enforces the same authorization on the server. The `admins` collection is not client-writable, preventing self-escalation.
-- `firestore.indexes.json` documents the composite indexes used by ordered major-semester and requirement views.
-
-### Secure first-admin bootstrap
-
-There is intentionally no public “make me admin” flow. In Firebase Console, first create the user in **Authentication**, copy their UID, then manually create `admins/{UID}` in Firestore:
-
-```json
-{ "email": "admin@example.com", "displayName": "Admin", "role": "admin", "active": true }
-```
-
-Add `createdAt` and `updatedAt` using Firestore server timestamps. Deploy the included rules before using production data. Enable Email/Password and Google providers in Firebase Authentication, then test an authorized user and a normal account (which must be rejected).
-
-### Phase 4 handoff
-
-Not implemented yet: public global search, advanced public filtering, Google Drive upload/integration workflow, and final public UX/optimization refinements. Phase 4 must start from `ICC-Website-Phase-3.zip` and preserve the existing application.
+**THIS PROJECT IS PHASE 2 OF 5 (Firestore data layer still pending).**

@@ -17,21 +17,20 @@
  * ------------------------------------------------------------------------
  */
 
-// Grade → points, out of 4.2 (ICC's local scale — not an official JUST document)
+// Grade → points, out of 4.2 (ICC's local scale — not an official GJU document)
 const GPA_SCALE = [
   { grade: "A+", points: 4.2 },
   { grade: "A", points: 4.0 },
-  { grade: "A-", points: 3.75 },
-  { grade: "B+", points: 3.5 },
-  { grade: "B", points: 3.25 },
-  { grade: "B-", points: 3.0 },
-  { grade: "C+", points: 2.75 },
-  { grade: "C", points: 2.5 },
-  { grade: "C-", points: 2.25 },
-  { grade: "D+", points: 2.0 },
-  { grade: "D", points: 1.75 },
-  { grade: "D-", points: 1.5 },
-  { grade: "F", points: 0.50 },
+  { grade: "A-", points: 3.7 },
+  { grade: "B+", points: 3.4 },
+  { grade: "B", points: 3.0 },
+  { grade: "B-", points: 2.7 },
+  { grade: "C+", points: 2.4 },
+  { grade: "C", points: 2.0 },
+  { grade: "C-", points: 1.7 },
+  { grade: "D+", points: 1.4 },
+  { grade: "D", points: 1.0 },
+  { grade: "F", points: 0.0 },
 ];
 
 let rowId = 0;
