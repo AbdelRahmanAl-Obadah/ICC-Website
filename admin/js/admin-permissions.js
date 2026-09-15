@@ -43,3 +43,32 @@ export function hasPermission(profile, key) {
   if (profile.role === 'superadmin') return true;
   return Array.isArray(profile.permissions) && profile.permissions.includes(key);
 }
+
+/** True if the profile has at least one of the given keys (or a single key). */
+export function hasAnyPermission(profile, keys) {
+  if (!profile) return false;
+  if (profile.role === 'superadmin') return true;
+  const list = Array.isArray(keys) ? keys : [keys];
+  return list.some(key => hasPermission(profile, key));
+}
+
+/**
+ * Single source of truth for the sidebar. Every manageable area of the
+ * admin panel is one entry here — the page it links to, its icon, and the
+ * permission key(s) required to see it. admin-layout.js renders this list
+ * after the signed-in admin's profile/permissions are known, so each admin
+ * only ever sees the sections they've actually been granted. Dashboard has
+ * no `permission`, so it's visible to every signed-in admin/superadmin.
+ */
+export const NAV_ITEMS = [
+  { href: 'index.html', label: 'Dashboard', icon: 'dashboard', permission: null },
+  { href: 'majors.html', label: 'Majors', icon: 'majors', permission: 'majors' },
+  { href: 'semesters.html', label: 'Semesters', icon: 'semesters', permission: 'semesters' },
+  { href: 'subjects.html', label: 'Subjects', icon: 'subjects', permission: 'subjects' },
+  { href: 'requirements.html', label: 'Requirements', icon: 'requirements', permission: 'requirements' },
+  { href: 'curriculum.html', label: 'Curriculum trees', icon: 'curriculum', permission: 'curriculum' },
+  { href: 'content.html', label: 'Website content', icon: 'content', permission: ['content_hero', 'content_about', 'content_nav', 'content_footer'] },
+  { href: 'settings.html', label: 'Settings', icon: 'settings', permission: 'settings' },
+  { href: 'users.html', label: 'Team & access', icon: 'users', permission: 'users' },
+  { href: 'audit-log.html', label: 'Audit log', icon: 'audit', permission: 'auditlog' },
+];

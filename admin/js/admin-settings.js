@@ -21,7 +21,7 @@ requireAdmin(async () => {
     app.hidden = false;
     say(error.message || 'Settings could not be loaded.', 'error');
   }
-});
+}, 'settings');
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
