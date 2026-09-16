@@ -1,0 +1,91 @@
+/* ==========================================================================
+   ICC — Icons
+   Every icon on the site is an inline SVG from js/icons.js. This file is
+   the only place their size, alignment and direction are decided, so an
+   icon in a button, a sidebar link or a table row all behave the same way
+   without per-component rules.
+   ========================================================================== */
+
+.icon {
+  /* em-based by default: an icon next to text scales with that text, and
+     a heading's icon is bigger than a caption's without anyone setting a
+     pixel value. --icon-size overrides it per instance. */
+  width: var(--icon-size, 1em);
+  height: var(--icon-size, 1em);
+  flex: none;
+  display: inline-block;
+  vertical-align: -0.135em; /* sits on the text baseline, not below it */
+  overflow: visible;        /* stroke joins at the viewBox edge stay crisp */
+  pointer-events: none;     /* clicks land on the button, never the glyph */
+}
+
+/* Fixed sizes for places that shouldn't inherit a surprising font-size */
+.icon--xs { --icon-size: 14px; }
+.icon--sm { --icon-size: 16px; }
+.icon--md { --icon-size: 18px; }
+.icon--lg { --icon-size: 22px; }
+.icon--xl { --icon-size: 28px; }
+.icon--2xl { --icon-size: 40px; }
+
+/* Icons carried by <i data-icon> before hydrateIcons() runs must not
+   reserve a text-shaped box or the layout jumps when they're replaced. */
+i[data-icon] {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
+/* --------------------------------------------------------------------------
+   RTL
+   Arabic flips the page, and a "next" arrow that keeps pointing right is
+   then pointing backwards. Only icons js/icons.js marks as directional get
+   mirrored — a clock or a magnifier mirrored just looks broken.
+   -------------------------------------------------------------------------- */
+html[dir="rtl"] .icon[data-icon-flip] {
+  transform: scaleX(-1);
+}
+
+/* --------------------------------------------------------------------------
+   Inline pairing
+   An icon that sits inside a text link or a label needs a little air and
+   must never get underlined along with the text.
+   -------------------------------------------------------------------------- */
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.btn .icon,
+.icon-btn .icon,
+.admin-nav__link .icon,
+.search-filter .icon {
+  text-decoration: none;
+}
+
+/* Slight optical correction: a stroked icon reads heavier than the text
+   beside it at small sizes, so mute it very slightly in muted contexts. */
+.admin-nav__link .icon { opacity: 0.85; }
+.admin-nav__link[aria-current="page"] .icon,
+.admin-nav__link:hover .icon { opacity: 1; }
+
+/* Large decorative state icons (empty states, status panels). Sizes live
+   with those components (style.css / auth.css / admin.css); only the
+   lighter stroke — which is what stops a big icon looking heavy — is set
+   here, so the two files can't disagree about the size. */
+.state__icon .icon,
+.admin-state__icon .icon,
+.auth-status__icon .icon {
+  stroke-width: 1.5;
+}
+
+/* Square 32px action buttons in the admin tables. Their font-size is set
+   for text, so an em-sized icon inside one comes out too small. */
+.icon-btn .icon { --icon-size: 17px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .icon--spin { animation: icc-icon-spin 900ms linear infinite; }
+}
+@keyframes icc-icon-spin {
+  to { transform: rotate(360deg); }
+}

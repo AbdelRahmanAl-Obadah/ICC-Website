@@ -138,6 +138,12 @@ const translations = {
     // Nav — new pages
     nav_gpa: "GPA Calculator",
     nav_admins: "ICC Admins",
+    // Burger button label. It changes with the menu's state, so a screen
+    // reader announces "Close menu" once the panel is open.
+    nav_menu_open: "Open menu",
+    nav_menu_close: "Close menu",
+    gpa_remove_course: "Remove course",
+    lightbox_close: "Close",
 
     // GPA calculator
     gpa_eyebrow: "Student tool",
@@ -182,7 +188,7 @@ const translations = {
     admin_sign_in: "Sign in",
     admin_or: "or",
     admin_google_signin: "Continue with Google",
-    admin_back_to_site: "← Back to the public site",
+    admin_back_to_site: "Back to the public site",
     admin_reset_title: "Reset your password",
     admin_reset_lede: "Enter your admin email and we'll send you a reset link.",
     admin_reset_send: "Send reset link",
@@ -1369,6 +1375,10 @@ const translations = {
     // Nav — new pages
     nav_gpa: "حاسبة المعدل",
     nav_admins: "مشرفو ICC",
+    nav_menu_open: "فتح القائمة",
+    nav_menu_close: "إغلاق القائمة",
+    gpa_remove_course: "حذف المادة",
+    lightbox_close: "إغلاق",
 
     // GPA calculator
     gpa_eyebrow: "أداة للطلاب",
@@ -1413,7 +1423,7 @@ const translations = {
     admin_sign_in: "تسجيل الدخول",
     admin_or: "أو",
     admin_google_signin: "المتابعة عبر Google",
-    admin_back_to_site: "→ العودة إلى الموقع العام",
+    admin_back_to_site: "العودة إلى الموقع العام",
     admin_reset_title: "إعادة تعيين كلمة المرور",
     admin_reset_lede: "أدخل بريد المشرف الإلكتروني وسنرسل لك رابط إعادة التعيين.",
     admin_reset_send: "إرسال رابط إعادة التعيين",

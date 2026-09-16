@@ -21,6 +21,15 @@
   .nav__burger { display: flex; }
 }
 
+/* Above the collapse point the mobile panel and its scrim must not exist at
+   all. Leaving them merely transparent meant a stale `is-open` (e.g. after a
+   rotate or a desktop resize) could park an invisible full-screen scrim over
+   the page and swallow every click. */
+@media (min-width: 881px) {
+  .nav__mobile,
+  .nav__scrim { display: none; }
+}
+
 /* ---- Mobile (<= 640px) ----------------------------------------------------- */
 @media (max-width: 640px) {
   :root { --gutter: 18px; }

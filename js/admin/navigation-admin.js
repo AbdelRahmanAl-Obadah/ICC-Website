@@ -32,6 +32,7 @@
 import { protectAdminPage } from "./admin-guard.js";
 import { createCmsController, escapeHTML } from "./cms-admin.js";
 import { CMS_DOCS, normalizeNavigation, isSafeUrl } from "../cms-schema.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 function lang() {
@@ -104,9 +105,9 @@ function rowHTML(menu, link, index, total) {
       <td>
         <div class="admin-order-cell">
           <button type="button" class="icon-btn" data-move="up" ${index === 0 ? "disabled" : ""}
-                  aria-label="${T("admin_move_up")}">↑</button>
+                  aria-label="${T("admin_move_up")}">${icon("arrow-up")}</button>
           <button type="button" class="icon-btn" data-move="down" ${index === total - 1 ? "disabled" : ""}
-                  aria-label="${T("admin_move_down")}">↓</button>
+                  aria-label="${T("admin_move_down")}">${icon("arrow-down")}</button>
         </div>
       </td>
       <td><input type="text" data-link-field="label.en" value="${escapeHTML(link.label.en)}"
@@ -127,7 +128,7 @@ function rowHTML(menu, link, index, total) {
       </td>
       <td>
         <button type="button" class="icon-btn icon-btn--danger" data-remove
-                title="${T("admin_delete")}">🗑</button>
+                title="${T("admin_delete")}">${icon("trash")}</button>
       </td>
     </tr>`;
 }

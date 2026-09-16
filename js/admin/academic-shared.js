@@ -33,6 +33,7 @@
 
 import { getDependents } from "../firestore.js";
 import { can, ACTIONS, ownershipEnabled, ownsRecord } from "../permissions.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 
@@ -188,9 +189,9 @@ export function orderCellHTML(record, index, list) {
   return `
     <div class="admin-order-cell">
       <button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""}
-              aria-label="${escapeHTML(T("admin_move_up"))}">↑</button>
+              aria-label="${escapeHTML(T("admin_move_up"))}">${icon("arrow-up")}</button>
       <button class="icon-btn" data-action="down" ${index === list.length - 1 ? "disabled" : ""}
-              aria-label="${escapeHTML(T("admin_move_down"))}">↓</button>
+              aria-label="${escapeHTML(T("admin_move_down"))}">${icon("arrow-down")}</button>
       <span class="admin-order-cell__num">${record.displayOrder ?? "—"}</span>
     </div>`;
 }
@@ -203,18 +204,18 @@ export function orderCellHTML(record, index, list) {
 export function actionsCellHTML(profile, section, record) {
   const out = [];
   if (can(profile, section, ACTIONS.EDIT)) {
-    out.push(`<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">✎</button>`);
+    out.push(`<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">${icon("pencil")}</button>`);
   }
   if (can(profile, section, ACTIONS.PUBLISH)) {
     out.push(
       `<button class="icon-btn" data-action="toggle" title="${
         record.active ? T("admin_deactivate") : T("admin_activate")
-      }">${record.active ? "⏸" : "▶"}</button>`
+      }">${record.active ? icon("pause") : icon("play")}</button>`
     );
   }
   if (can(profile, section, ACTIONS.DELETE)) {
     out.push(
-      `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">🗑</button>`
+      `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">${icon("trash")}</button>`
     );
   }
   return `<div class="admin-table__actions">${out.join("") || NONE}</div>`;

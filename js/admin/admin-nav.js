@@ -18,6 +18,7 @@
  */
 
 import { PERMISSIONS, PERMISSION_GROUPS, hasPermission, isSuperAdmin } from "../permissions.js";
+import { icon } from "../icons.js";
 
 function lang() {
   return (window.ICC_I18N && window.ICC_I18N.getStoredLang()) || "en";
@@ -45,9 +46,11 @@ export function renderAdminNav(profile) {
   if (!nav) return;
 
   const here = currentFile();
-  const linkHTML = (href, icon, label, active) => `
+  // `iconName` is a key in js/icons.js — see the note above PERMISSIONS for
+  // why these are names rather than the Unicode glyphs they used to be.
+  const linkHTML = (href, iconName, label, active) => `
     <a class="admin-nav__link${active ? " is-active" : ""}" href="${href}"${active ? ' aria-current="page"' : ""}>
-      <span class="icn" aria-hidden="true">${icon}</span><span>${label}</span>
+      <span class="icn" aria-hidden="true">${icon(iconName)}</span><span>${label}</span>
     </a>`;
 
   let html = "";

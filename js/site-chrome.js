@@ -114,21 +114,12 @@ function renderNav(language) {
       links.forEach((a) => container.appendChild(a));
       markCurrent(container);
 
-      // js/ui.js bound "close the menu on click" to the links that were
-      // in the markup at startup. Those elements are gone now, so the
-      // behaviour is re-attached here — otherwise tapping a CMS link on a
-      // phone would navigate with the overlay still open on top.
-      if (selector === "[data-nav-mobile]") {
-        links.forEach((a) =>
-          a.addEventListener("click", () => {
-            container.classList.remove("is-open");
-            document.body.classList.remove("no-scroll");
-            document
-              .querySelector("[data-nav-burger]")
-              ?.setAttribute("aria-expanded", "false");
-          })
-        );
-      }
+      // Closing the mobile menu on link click is no longer re-wired here.
+      // js/ui.js listens on the panel instead of on each link, so links
+      // that appear later — these ones — are already covered, and the
+      // panel's own footer (the language switch) is no longer inside the
+      // container being cleared above, so replacing the nav can't delete
+      // it any more.
     });
   });
 }

@@ -29,6 +29,7 @@ import { protectAdminPage } from "./admin-guard.js";
 import { getAuditLogs, deleteAuditLog } from "../firestore.js";
 import { PERMISSIONS, can, ACTIONS as PERM_ACTIONS } from "../permissions.js";
 import { logAction, AUDIT_ACTIONS, normalizeAction } from "./audit-log.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 function lang() {
@@ -217,12 +218,12 @@ function rowHTML(r) {
       <td class="wrap">${escapeHTML(recordOf(r) || "—")}</td>
       <td>
         <div class="admin-table__actions">
-          <button class="icon-btn" data-action="details" title="${T("admin_view_details")}">⋯</button>
+          <button class="icon-btn" data-action="details" title="${T("admin_view_details")}">${icon("more-horizontal")}</button>
           ${
             canDelete()
               ? `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T(
                   "admin_delete"
-                )}">🗑</button>`
+                )}">${icon("trash")}</button>`
               : ""
           }
         </div>

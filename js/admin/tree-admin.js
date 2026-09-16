@@ -31,6 +31,7 @@ import { logAction } from "./audit-log.js";
 import { can, ACTIONS } from "../permissions.js";
 import { gateToolbar } from "./academic-shared.js";
 import {
+import { icon } from "../icons.js";
   getAllTreeNodes,
   createTreeNode,
   updateTreeNode,
@@ -136,13 +137,13 @@ function branchHTML(parentId, depth) {
         <div class="tree-node__row">
           <button class="tree-node__toggle" data-action="collapse" ${
             kidCount ? "" : 'disabled aria-hidden="true"'
-          } aria-label="${T("admin_tree_toggle")}">${kidCount ? (isCollapsed ? "▸" : "▾") : "·"}</button>
+          } aria-label="${T("admin_tree_toggle")}">${kidCount ? (isCollapsed ? icon("chevron-right") : icon("chevron-down")) : icon("dot")}</button>
 
           <span class="tree-node__type">${T(`tree_type_${n.type || "custom"}`)}</span>
           <span class="tree-node__name">${escapeHTML(nodeLabel(n))}</span>
           ${
             n.linkedMajorId
-              ? `<span class="tag tag--link" title="${T("admin_tree_linked")}">↗ ${escapeHTML(
+              ? `<span class="tag tag--link" title="${T("admin_tree_linked")}">${icon("external-link")} ${escapeHTML(
                   majors.find((m) => m.id === n.linkedMajorId)?.name?.en || n.linkedMajorId
                 )}</span>`
               : ""
@@ -163,10 +164,10 @@ function branchHTML(parentId, depth) {
               caps.edit
                 ? `<button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""} aria-label="${T(
                     "admin_move_up"
-                  )}">↑</button>
+                  )}">${icon("arrow-up")}</button>
             <button class="icon-btn" data-action="down" ${
               index === kids.length - 1 ? "disabled" : ""
-            } aria-label="${T("admin_move_down")}">↓</button>`
+            } aria-label="${T("admin_move_down")}">${icon("arrow-down")}</button>`
                 : ""
             }
             ${
@@ -176,20 +177,20 @@ function branchHTML(parentId, depth) {
             }
             ${
               caps.edit
-                ? `<button class="icon-btn" data-action="move" title="${T("admin_tree_move")}">⇄</button>
-            <button class="icon-btn" data-action="edit" title="${T("admin_edit")}">✎</button>`
+                ? `<button class="icon-btn" data-action="move" title="${T("admin_tree_move")}">${icon("swap")}</button>
+            <button class="icon-btn" data-action="edit" title="${T("admin_edit")}">${icon("pencil")}</button>`
                 : ""
             }
             ${
               caps.publish
                 ? `<button class="icon-btn" data-action="toggle" title="${
                     n.active ? T("admin_deactivate") : T("admin_activate")
-                  }">${n.active ? "⏸" : "▶"}</button>`
+                  }">${n.active ? icon("pause") : icon("play")}</button>`
                 : ""
             }
             ${
               caps.delete
-                ? `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">🗑</button>`
+                ? `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">${icon("trash")}</button>`
                 : ""
             }
           </div>

@@ -298,59 +298,137 @@ select:focus-visible,
 
 .nav__burger {
   display: none;
-  width: 40px;
-  height: 40px;
+  position: relative;
+  width: 42px;
+  height: 42px;
   border: 1px solid var(--icc-gray);
-  border-radius: 3px;
+  border-radius: var(--radius, 3px);
   background: #fff;
+  color: var(--icc-black);
   align-items: center;
   justify-content: center;
+  /* The button is the whole hit target on a phone; 42px keeps it above
+     the 40px minimum without making the header taller. */
+  flex: none;
 }
 
-.nav__burger span,
-.nav__burger span::before,
-.nav__burger span::after {
-  content: "";
-  display: block;
-  width: 18px;
-  height: 2px;
-  background: var(--icc-black);
-  position: relative;
-  transition: transform 180ms ease, opacity 180ms ease;
+.nav__burger:hover { border-color: var(--icc-blue); color: var(--icc-blue); }
+.nav__burger:focus-visible { outline: 2px solid var(--icc-blue); outline-offset: 2px; }
+
+/* Menu and close are two stacked SVGs that cross-fade, rather than three
+   CSS bars folding into an X. Same animation, but the shapes are real
+   icons — they inherit colour, scale cleanly and match the rest of the
+   icon set instead of being a one-off drawn in CSS. */
+.nav__burger-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition: opacity 180ms ease, transform 220ms ease;
 }
-.nav__burger span::before { position: absolute; top: -6px; }
-.nav__burger span::after { position: absolute; top: 6px; }
+.nav__burger-icon--open { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+.nav__burger-icon--close { transform: translate(-50%, -50%) rotate(-90deg); opacity: 0; }
 
-.nav__burger[aria-expanded="true"] span { background: transparent; }
-.nav__burger[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
-.nav__burger[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+.nav__burger[aria-expanded="true"] .nav__burger-icon--open {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+.nav__burger[aria-expanded="true"] .nav__burger-icon--close {
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+}
 
+/* --------------------------------------------------------------------------
+   Mobile menu panel
+
+   Previously this was display:none -> display:block, which can't animate
+   and left the panel in the accessibility tree logic of whoever was
+   reading it. It now slides and fades using visibility, so it is fully
+   hidden from assistive tech when closed and still animates when opened.
+   -------------------------------------------------------------------------- */
 .nav__mobile {
-  display: none;
+  position: fixed;
+  inset: var(--nav-height) 0 auto 0;
+  max-height: calc(100dvh - var(--nav-height));
+  background: #fff;
+  z-index: 450;
+  padding: 18px var(--gutter) 32px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-bottom: var(--border);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 200ms ease, transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0s linear 240ms;
+}
+
+.nav__mobile.is-open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+/* Dim the page behind the menu and give "tap outside to close" a target.
+   Sits under the panel but over the content. */
+.nav__scrim {
   position: fixed;
   inset: var(--nav-height) 0 0 0;
-  background: #fff;
-  z-index: 400;
-  padding: 24px var(--gutter) 40px;
-  overflow-y: auto;
+  background: rgba(10, 12, 14, 0.38);
+  z-index: 440;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
 }
+.nav__scrim.is-open { opacity: 1; visibility: visible; transition-delay: 0s; }
 
-.nav__mobile.is-open { display: block; }
+.nav__mobile-links { display: block; }
 
 .nav__mobile-link {
-  display: block;
-  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 2px;
   font-family: var(--font-display);
-  font-size: var(--step-2);
+  font-size: var(--step-1);
   border-bottom: var(--border);
+  color: var(--icc-ink-soft);
+}
+
+.nav__mobile-link:last-child { border-bottom: none; }
+.nav__mobile-link:hover { color: var(--icc-black); }
+
+/* The mobile menu never showed which page you were on. It does now, using
+   the same data-nav-key the desktop nav uses. */
+.nav__mobile-link[aria-current="page"] {
+  color: var(--icc-black);
+  font-weight: 700;
+}
+.nav__mobile-link[aria-current="page"]::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--icc-blue);
+  flex: none;
 }
 
 .nav__mobile-foot {
-  margin-top: 24px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
+
+/* The mobile menu's language switch is the only one visible under 880px
+   (the header one is hidden), so make it a comfortable size. */
+.nav__mobile-foot .lang-switch button { padding: 9px 16px; }
 
 /* ==========================================================================
    Footer
@@ -419,15 +497,23 @@ select:focus-visible,
   color: var(--icc-ink-soft);
 }
 
+/* Holds an inline SVG now rather than a text glyph, so it needs to be a
+   flex box that centres its child instead of a text box sized by font. */
 .state__icon {
-  width: 36px;
-  height: 36px;
-  margin-inline: auto 12px;
-  margin-bottom: 12px;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--icc-gray-soft);
+  color: var(--icc-ink-soft);
 }
+.state__icon .icon { --icon-size: 22px; }
 
 .state--error { border-color: #E37373; color: #B23A3A; }
-.state--error .state__icon { color: #B23A3A; }
+.state--error .state__icon { color: #B23A3A; background: #FBEAEA; }
 
 .state[hidden] { display: none; }
 

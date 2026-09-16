@@ -41,6 +41,7 @@ import {
 } from "../permissions.js";
 import { logAction } from "./audit-log.js";
 import {
+import { icon } from "../icons.js";
   saveVersion,
   getDependents,
   deleteDependents,
@@ -450,7 +451,7 @@ export function rowActionsHTML(profile, section, record, ownershipContext = {}) 
   const out = [];
 
   if (owns && can(profile, section, ACTIONS.EDIT)) {
-    out.push(`<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">✎</button>`);
+    out.push(`<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">${icon("pencil")}</button>`);
   }
   if (owns && can(profile, section, ACTIONS.CREATE)) {
     out.push(`<button class="icon-btn" data-action="duplicate" title="${T("admin_duplicate")}">⧉</button>`);
@@ -458,15 +459,15 @@ export function rowActionsHTML(profile, section, record, ownershipContext = {}) 
   if (owns && can(profile, section, ACTIONS.PUBLISH)) {
     out.push(
       state === WORKFLOW.PUBLISHED
-        ? `<button class="icon-btn" data-action="unpublish" title="${T("wf_unpublish")}">⏸</button>`
-        : `<button class="icon-btn" data-action="publish" title="${T("wf_publish")}">▶</button>`
+        ? `<button class="icon-btn" data-action="unpublish" title="${T("wf_unpublish")}">${icon("pause")}</button>`
+        : `<button class="icon-btn" data-action="publish" title="${T("wf_publish")}">${icon("play")}</button>`
     );
   }
   if (can(profile, "versions", ACTIONS.VIEW)) {
     out.push(`<button class="icon-btn" data-action="history" title="${T("ver_history")}">⟲</button>`);
   }
   if (owns && can(profile, section, ACTIONS.DELETE)) {
-    out.push(`<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">🗑</button>`);
+    out.push(`<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">${icon("trash")}</button>`);
   }
   return out.join("") || "—";
 }

@@ -16,6 +16,7 @@
  */
 
 import { getSemestersForMajor, getSubjectsForMajor, FirestoreNotConfiguredError } from "./firestore.js";
+import { icon } from "./icons.js";
 
 // Cache of the last successfully loaded semesters/subjects so a language
 // switch can re-render instantly without refetching Firestore.
@@ -49,10 +50,10 @@ function subjectCardHTML(subject, lang) {
   const prereq = subject.prerequisite?.[lang] || subject.prerequisite?.en || "";
   const description = subject.description?.[lang] || subject.description?.en || "";
   const link = subject.courseUrl
-    ? `<a class="subject-card__link" href="${subject.courseUrl}" target="_blank" rel="noopener">${t(
+    ? `<a class="subject-card__link icon-text" href="${subject.courseUrl}" target="_blank" rel="noopener">${t(
         "course_link",
         lang
-      )} →</a>`
+      )}${icon("external-link")}</a>`
     : "";
 
   return `

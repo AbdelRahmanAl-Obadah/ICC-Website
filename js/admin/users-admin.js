@@ -58,6 +58,7 @@ import {
   normalizeOwnership,
 } from "../permissions.js";
 import { getMajors } from "../firestore.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 function lang() {
@@ -245,29 +246,29 @@ function rowHTML(u) {
   const actions = [];
   if (govern && !isSelf) {
     actions.push(
-      `<button class="icon-btn" data-action="permissions" title="${T("admin_edit_permissions")}">⚿</button>`
+      `<button class="icon-btn" data-action="permissions" title="${T("admin_edit_permissions")}">${icon("key")}</button>`
     );
   }
   if (govern && !isSelf && !isSuper) {
     actions.push(
       `<button class="icon-btn" data-action="toggle" title="${
         u.status === STATUS.ACTIVE ? T("admin_deactivate") : T("admin_activate")
-      }">${u.status === STATUS.ACTIVE ? "⏸" : "▶"}</button>`
+      }">${u.status === STATUS.ACTIVE ? icon("pause") : icon("play")}</button>`
     );
     if (u.role === ROLES.ADMIN) {
       actions.push(
-        `<button class="icon-btn" data-action="revoke" title="${T("admin_revoke_admin")}">⊘</button>`
+        `<button class="icon-btn" data-action="revoke" title="${T("admin_revoke_admin")}">${icon("ban")}</button>`
       );
     }
     actions.push(
-      `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">🗑</button>`
+      `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">${icon("trash")}</button>`
     );
   }
   if (!govern && u.role === ROLES.USER && !isSelf) {
     actions.push(
       `<button class="icon-btn" data-action="toggle" title="${
         u.status === STATUS.ACTIVE ? T("admin_deactivate") : T("admin_activate")
-      }">${u.status === STATUS.ACTIVE ? "⏸" : "▶"}</button>`
+      }">${u.status === STATUS.ACTIVE ? icon("pause") : icon("play")}</button>`
     );
   }
 

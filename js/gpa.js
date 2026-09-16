@@ -35,6 +35,15 @@ const GPA_SCALE = [
 
 let rowId = 0;
 
+/**
+ * Icons come from js/icons.js. This file is loaded as a plain <script>
+ * (not a module), so the library is read off `window` — the page loads
+ * js/icons.js ahead of this one for exactly that reason.
+ */
+function ICON(name) {
+  return window.ICC_ICONS ? window.ICC_ICONS.icon(name) : "";
+}
+
 function gradeOptionsHtml(selected) {
   return GPA_SCALE.map(
     (g) =>
@@ -62,7 +71,8 @@ function createRow() {
         <label data-i18n="gpa_col_grade">Grade</label>
         <select data-gpa-course-grade>${gradeOptionsHtml(4.0)}</select>
       </div>
-      <button type="button" class="gpa-row-remove" data-gpa-remove-row aria-label="Remove course">✕</button>
+      <button type="button" class="gpa-row-remove" data-gpa-remove-row
+              data-i18n-attr="aria-label:gpa_remove_course" aria-label="Remove course">${ICON("trash")}</button>
     </div>
 
     <div class="gpa-row__extra">

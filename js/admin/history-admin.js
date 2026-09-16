@@ -24,6 +24,7 @@ import { openVersionHistory } from "./version-history.js";
 import { PERMISSIONS, sectionForCollection, can, ACTIONS } from "../permissions.js";
 import { CMS_DOC_SECTION } from "../cms-schema.js";
 import { T, lang, escapeHTML, showLoading, showError, renderRows } from "./academic-shared.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 
@@ -148,7 +149,7 @@ function rowHTML(v) {
         <div class="admin-table__actions">
           ${
             mayOpen && page
-              ? `<a class="icon-btn" href="${page}" title="${T("ver_open_cms")}">↗</a>`
+              ? `<a class="icon-btn" href="${page}" title="${T("ver_open_cms")}">${icon("external-link")}</a>`
               : "—"
           }
         </div>

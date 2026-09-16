@@ -53,7 +53,7 @@ function ensureModalHost() {
     <div class="admin-modal__box" data-modal-box>
       <div class="admin-modal__head">
         <h3 data-modal-title></h3>
-        <button type="button" class="admin-modal__close" data-modal-close aria-label="Close">✕</button>
+        <button type="button" class="admin-modal__close" data-modal-close aria-label="Close">${window.ICC_ICONS.icon("close")}</button>
       </div>
       <div class="admin-modal__body" data-modal-body></div>
     </div>
@@ -150,10 +150,15 @@ function clearAllErrors(form) {
    Section state (loading/empty/error) for table panels
    --------------------------------------------------------------------- */
 function stateHTML(kind, { title, body } = {}) {
-  const icon = kind === "error" ? "⚠" : kind === "empty" ? "—" : "…";
+  // Was "⚠" / "—" / "…" typed straight into the markup. The dashes were
+  // not icons at all, just punctuation standing in for one, and the
+  // warning sign rendered as a colour emoji on some platforms and a black
+  // outline on others. All three are proper SVGs now.
+  const name = kind === "error" ? "alert-triangle" : kind === "empty" ? "layers" : "clock";
+  const glyph = window.ICC_ICONS ? window.ICC_ICONS.icon(name) : "";
   return `
     <div class="admin-state" role="${kind === "error" ? "alert" : "status"}">
-      <div class="admin-state__icon">${icon}</div>
+      <div class="admin-state__icon">${glyph}</div>
       <strong>${title || ""}</strong>
       <p>${body || ""}</p>
     </div>
@@ -166,27 +171,74 @@ function stateHTML(kind, { title, body } = {}) {
 function initAdminSidebar() {
   const burger = document.querySelector("[data-admin-burger]");
   const sidebar = document.querySelector("[data-admin-sidebar]");
+  if (!burger || !sidebar) return;
+
   let scrim = document.querySelector(".admin-scrim");
   if (!scrim) {
     scrim = document.createElement("div");
     scrim.className = "admin-scrim";
     document.body.appendChild(scrim);
   }
-  if (!burger || !sidebar) return;
 
-  const close = () => {
+  const t = (key, fallback) =>
+    (window.ICC_I18N && window.ICC_I18N.t(key, window.ICC_I18N.getStoredLang())) || fallback;
+
+  let lastFocused = null;
+  const isOpen = () => sidebar.classList.contains("is-open");
+
+  const close = ({ restoreFocus = true } = {}) => {
+    if (!isOpen()) return;
     sidebar.classList.remove("is-open");
     scrim.classList.remove("is-open");
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", t("nav_menu_open", "Open menu"));
+    if (restoreFocus && lastFocused) lastFocused.focus({ preventScroll: true });
   };
+
   const open = () => {
+    if (isOpen()) return;
+    lastFocused = document.activeElement;
     sidebar.classList.add("is-open");
     scrim.classList.add("is-open");
+    burger.setAttribute("aria-expanded", "true");
+    burger.setAttribute("aria-label", t("nav_menu_close", "Close menu"));
+    // Focus goes into the drawer, so the first Tab lands on a nav link
+    // rather than on the page hidden behind it.
+    sidebar.querySelector("a, button")?.focus({ preventScroll: true });
   };
-  burger.addEventListener("click", () => {
-    sidebar.classList.contains("is-open") ? close() : open();
+
+  burger.addEventListener("click", () => (isOpen() ? close() : open()));
+  scrim.addEventListener("click", () => close());
+
+  // Delegated on purpose. The sidebar's links are rendered by
+  // admin-nav.js AFTER this runs, and re-rendered on every language
+  // switch — binding each <a> directly (which is what this used to do)
+  // meant the drawer stayed open on top of the page just navigated to.
+  sidebar.addEventListener("click", (e) => {
+    if (e.target.closest("a")) close({ restoreFocus: false });
   });
-  scrim.addEventListener("click", close);
-  sidebar.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen()) close();
+  });
+
+  // The drawer is only a drawer below 900px; past that the CSS puts the
+  // sidebar back in the layout, and a leftover open state would leave an
+  // invisible scrim across the panel.
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (window.innerWidth > 900) close({ restoreFocus: false });
+    }, 120);
+  });
+
+  document.addEventListener("icc:languagechange", () => {
+    burger.setAttribute(
+      "aria-label",
+      isOpen() ? t("nav_menu_close", "Close menu") : t("nav_menu_open", "Open menu")
+    );
+  });
 }
 
 document.addEventListener("DOMContentLoaded", initAdminSidebar);

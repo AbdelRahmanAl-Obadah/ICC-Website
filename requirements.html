@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/icons.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/appearance.css">
@@ -44,19 +45,23 @@
         <button type="button" data-lang-btn="en">EN</button>
         <button type="button" data-lang-btn="ar">AR</button>
       </div>
-      <button type="button" class="nav__burger" data-nav-burger aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
-        <span></span>
+      <button type="button" class="nav__burger" data-nav-burger aria-expanded="false" aria-controls="mobileNav"
+              data-i18n-attr="aria-label:nav_menu_open" aria-label="Open menu">
+        <svg class="icon icon--lg nav__burger-icon nav__burger-icon--open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon icon--lg nav__burger-icon nav__burger-icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
   </div>
 
-  <div class="nav__mobile" id="mobileNav" data-nav-mobile>
-    <a class="nav__mobile-link" href="index.html" data-i18n="nav_home">Home</a>
-    <a class="nav__mobile-link" href="requirements.html" data-i18n="nav_requirements">Academic Requirements</a>
-    <a class="nav__mobile-link" href="majors.html" data-i18n="nav_majors">Majors</a>
-    <a class="nav__mobile-link" href="search.html" data-i18n="nav_search">Search</a>
-    <a class="nav__mobile-link" href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a>
-    <a class="nav__mobile-link" href="admins.html" data-i18n="nav_admins">ICC Admins</a>
+  <div class="nav__mobile" id="mobileNav" data-nav-panel>
+    <nav class="nav__mobile-links" aria-label="Primary" data-nav-mobile>
+      <a class="nav__mobile-link" href="index.html" data-nav-key="home" data-i18n="nav_home">Home</a>
+      <a class="nav__mobile-link" href="requirements.html" data-nav-key="requirements" data-i18n="nav_requirements">Academic Requirements</a>
+      <a class="nav__mobile-link" href="majors.html" data-nav-key="majors" data-i18n="nav_majors">Majors</a>
+      <a class="nav__mobile-link" href="search.html" data-nav-key="search" data-i18n="nav_search">Search</a>
+      <a class="nav__mobile-link" href="gpa-calculator.html" data-nav-key="gpa" data-i18n="nav_gpa">GPA Calculator</a>
+      <a class="nav__mobile-link" href="admins.html" data-nav-key="admins" data-i18n="nav_admins">ICC Admins</a>
+    </nav>
     <div class="nav__mobile-foot">
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang-btn="en">EN</button>
@@ -64,6 +69,8 @@
       </div>
     </div>
   </div>
+
+  <div class="nav__scrim" data-nav-scrim></div>
 </header>
 
 <main id="main">
@@ -145,6 +152,7 @@
   </div>
 </footer>
 
+<script type="module" src="js/icons.js"></script>
 <script src="js/language.js" defer></script>
 <script src="js/ui.js" defer></script>
 <script type="module" src="js/appearance.js"></script>

@@ -90,7 +90,14 @@
   background: var(--icc-blue);
   color: #fff;
 }
-.admin-nav__link .icn { width: 18px; text-align: center; font-family: var(--font-mono); opacity: 0.85; }
+.admin-nav__link .icn {
+  width: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.admin-nav__link .icn .icon { --icon-size: 18px; }
 
 .admin-sidebar__foot {
   margin-top: auto;
@@ -134,13 +141,49 @@
 .admin-topbar p { margin: 2px 0 0; font-size: var(--step--1); }
 .admin-topbar__actions { display: flex; gap: 10px; align-items: center; }
 
+/* The sidebar toggle used to be an empty <span> with no styling at all —
+   on a phone it rendered as a blank 38px box with nothing in it. It is now
+   the same cross-fading menu/close pair as the public site's burger. */
 .admin-burger {
   display: none;
+  position: relative;
   background: transparent;
   border: 1px solid var(--icc-gray);
   border-radius: var(--radius);
-  width: 38px;
-  height: 38px;
+  color: var(--icc-black);
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+.admin-burger:hover { border-color: var(--icc-blue); color: var(--icc-blue); }
+.admin-burger:focus-visible { outline: 2px solid var(--icc-blue); outline-offset: 2px; }
+
+.admin-burger__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition: opacity 180ms ease, transform 220ms ease;
+}
+.admin-burger__icon--open { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+.admin-burger__icon--close { transform: translate(-50%, -50%) rotate(-90deg); opacity: 0; }
+.admin-burger[aria-expanded="true"] .admin-burger__icon--open {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+.admin-burger[aria-expanded="true"] .admin-burger__icon--close {
+  transform: translate(-50%, -50%) rotate(0deg);
+  opacity: 1;
+}
+
+/* "Back to the public site" now carries a real arrow icon instead of a
+   glyph baked into the translated string. */
+.admin-sidebar__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  text-decoration: none;
 }
 
 .admin-content {
@@ -449,7 +492,7 @@
   padding: 40px 20px;
   color: var(--icc-ink-soft);
 }
-.admin-state__icon { font-size: 1.4rem; margin-bottom: 8px; }
+.admin-state__icon { font-size: 1.9rem; line-height: 1; margin-bottom: 10px; color: var(--icc-ink-soft); opacity: 0.7; }
 
 /* ---------------------------------------------------------------------
    Login page
@@ -522,15 +565,32 @@
     z-index: 400;
     transition: inset-inline-start 200ms ease;
   }
-  .admin-sidebar.is-open { inset-inline-start: 0; }
+  .admin-sidebar.is-open {
+    inset-inline-start: 0;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+  }
   .admin-burger { display: inline-flex; align-items: center; justify-content: center; }
   .admin-topbar { padding: 14px 16px; }
   .admin-content { padding: 18px 16px 50px; }
+
+  /* Fades instead of snapping, and stays out of the accessibility tree
+     while closed (display:none alone can't animate). */
   .admin-scrim {
-    display: none;
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 350;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 350;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease, visibility 0s linear 200ms;
   }
-  .admin-scrim.is-open { display: block; }
+  .admin-scrim.is-open { opacity: 1; visibility: visible; transition-delay: 0s; }
+}
+
+/* Above the breakpoint the sidebar is a static column again, so a leftover
+   `is-open` scrim must never survive a resize and cover the panel. */
+@media (min-width: 901px) {
+  .admin-scrim { display: none; }
 }
 
 html[dir="rtl"] .admin-sidebar { direction: rtl; }

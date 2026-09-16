@@ -115,8 +115,17 @@
   border-radius: 50%;
   background: var(--icc-gray-soft);
   color: var(--icc-ink-soft);
-  font-size: 1.5rem;
 }
+.auth-status__icon .icon { --icon-size: 26px; }
+
+/* js/signup.js sets data-status-tone alongside the icon. Shape and colour
+   say the same thing, so neither alone has to carry the message — which
+   matters here because this badge is the first thing a student sees after
+   signing up, often before they read the sentence under it. */
+.auth-status__icon[data-status-tone="pending"] { background: #FFF4E0; color: #9A6412; }
+.auth-status__icon[data-status-tone="active"] { background: #E6F6EC; color: #1F8A4C; }
+.auth-status__icon[data-status-tone="rejected"] { background: #FBEAEA; color: #B23A3A; }
+.auth-status__icon[data-status-tone="disabled"] { background: var(--icc-gray-soft); color: var(--icc-ink-soft); }
 .auth-status h2 {
   font-size: var(--step-1);
   margin-bottom: 8px;

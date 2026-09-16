@@ -58,6 +58,7 @@ import {
 } from "../firestore.js";
 import { can, ACTIONS, filterOwned, ownsRecord } from "../permissions.js";
 import {
+import { icon } from "../icons.js";
   T,
   lang,
   escapeHTML,
@@ -293,10 +294,10 @@ function rowHTML(s, index, list) {
       <td>${statusBadgeHTML(s)}</td>
       <td>
         <div class="admin-table__actions">
-          ${can(profile, SECTION, ACTIONS.EDIT) ? `<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">✎</button>` : ""}
+          ${can(profile, SECTION, ACTIONS.EDIT) ? `<button class="icon-btn" data-action="edit" title="${T("admin_edit")}">${icon("pencil")}</button>` : ""}
           ${can(profile, SECTION, ACTIONS.CREATE) ? `<button class="icon-btn" data-action="duplicate" title="${T("admin_duplicate")}">⧉</button>` : ""}
-          ${can(profile, SECTION, ACTIONS.PUBLISH) ? `<button class="icon-btn" data-action="toggle" title="${s.active ? T("admin_deactivate") : T("admin_activate")}">${s.active ? "⏸" : "▶"}</button>` : ""}
-          ${can(profile, SECTION, ACTIONS.DELETE) ? `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">🗑</button>` : ""}
+          ${can(profile, SECTION, ACTIONS.PUBLISH) ? `<button class="icon-btn" data-action="toggle" title="${s.active ? T("admin_deactivate") : T("admin_activate")}">${s.active ? icon("pause") : icon("play")}</button>` : ""}
+          ${can(profile, SECTION, ACTIONS.DELETE) ? `<button class="icon-btn icon-btn--danger" data-action="delete" title="${T("admin_delete")}">${icon("trash")}</button>` : ""}
         </div>
       </td>
     </tr>`;

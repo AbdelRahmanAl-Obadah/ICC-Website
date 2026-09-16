@@ -42,6 +42,7 @@ import {
   getSubjectsForMajor,
 } from "../firestore.js";
 import { normalizeDriveImageUrl } from "../drive-utils.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 const T = (key) => window.ICC_I18N.t(key, lang());
@@ -87,8 +88,8 @@ function rowHTML(m, index, list) {
       ${bulk ? bulkCellHTML(m) : ""}
       <td>
         <div style="display:flex; gap:4px; align-items:center;">
-          <button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""} aria-label="Move up">↑</button>
-          <button class="icon-btn" data-action="down" ${index === list.length - 1 ? "disabled" : ""} aria-label="Move down">↓</button>
+          <button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""} aria-label="Move up">${icon("arrow-up")}</button>
+          <button class="icon-btn" data-action="down" ${index === list.length - 1 ? "disabled" : ""} aria-label="Move down">${icon("arrow-down")}</button>
           <span style="margin-inline-start:4px; color:var(--icc-ink-soft); font-family:var(--font-mono); font-size:0.78rem;">${m.displayOrder ?? "—"}</span>
         </div>
       </td>

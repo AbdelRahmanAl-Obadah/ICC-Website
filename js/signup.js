@@ -29,6 +29,7 @@ import {
   AuthNotConfiguredError,
 } from "./auth.js";
 import { STATUS, isAdminRole } from "./permissions.js";
+import { icon } from "./icons.js";
 
 function lang() {
   return (window.ICC_I18N && window.ICC_I18N.getStoredLang()) || "en";
@@ -65,11 +66,16 @@ function handleAuthError(err) {
 /* Status view                                                         */
 /* ------------------------------------------------------------------ */
 
+// `icon` is a name from js/icons.js. These four are the only thing a
+// signed-up student sees while they wait, so they carry real meaning:
+// approved / rejected / on hold are not interchangeable, and the glyphs
+// they used to be ("✓", "✕", "⏸") were the least reliably rendered
+// characters on the site.
 const STATUS_VIEW = {
-  [STATUS.PENDING]: { icon: "◷", titleKey: "signup_status_pending_title", bodyKey: "signup_status_pending_body" },
-  [STATUS.ACTIVE]: { icon: "✓", titleKey: "signup_status_active_title", bodyKey: "signup_status_active_body" },
-  [STATUS.REJECTED]: { icon: "✕", titleKey: "signup_status_rejected_title", bodyKey: "signup_status_rejected_body" },
-  [STATUS.DISABLED]: { icon: "⏸", titleKey: "signup_status_disabled_title", bodyKey: "signup_status_disabled_body" },
+  [STATUS.PENDING]: { icon: "clock", tone: "pending", titleKey: "signup_status_pending_title", bodyKey: "signup_status_pending_body" },
+  [STATUS.ACTIVE]: { icon: "check-circle", tone: "active", titleKey: "signup_status_active_title", bodyKey: "signup_status_active_body" },
+  [STATUS.REJECTED]: { icon: "x-circle", tone: "rejected", titleKey: "signup_status_rejected_title", bodyKey: "signup_status_rejected_body" },
+  [STATUS.DISABLED]: { icon: "ban", tone: "disabled", titleKey: "signup_status_disabled_title", bodyKey: "signup_status_disabled_body" },
 };
 
 function showStatus(profile) {
@@ -81,7 +87,11 @@ function showStatus(profile) {
   formPanel.hidden = true;
   statusPanel.hidden = false;
 
-  statusPanel.querySelector("[data-status-icon]").textContent = view.icon;
+  const iconMount = statusPanel.querySelector("[data-status-icon]");
+  iconMount.innerHTML = icon(view.icon);
+  // The colour carries the same information as the shape, for anyone who
+  // reads the badge before the sentence under it.
+  iconMount.setAttribute("data-status-tone", view.tone);
   statusPanel.querySelector("[data-status-title]").textContent = T(view.titleKey);
   statusPanel.querySelector("[data-status-body]").textContent = T(view.bodyKey);
   statusPanel.querySelector("[data-status-email]").textContent = profile.email || "";

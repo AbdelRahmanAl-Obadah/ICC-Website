@@ -11,6 +11,7 @@ import { logAction } from "./audit-log.js";
 import { can, ACTIONS } from "../permissions.js";
 import { actionsCellHTML, gateToolbar } from "./academic-shared.js";
 import {
+import { icon } from "../icons.js";
   getAllRequirements,
   createRequirement,
   updateRequirement,
@@ -60,8 +61,8 @@ function rowHTML(r, index, list) {
             // Reordering writes to the records, so it is an EDIT — not
             // something a read-only viewer may do.
             caps.edit
-              ? `<button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""} aria-label="Move up">↑</button>
-          <button class="icon-btn" data-action="down" ${index === list.length - 1 ? "disabled" : ""} aria-label="Move down">↓</button>`
+              ? `<button class="icon-btn" data-action="up" ${index === 0 ? "disabled" : ""} aria-label="Move up">${icon("arrow-up")}</button>
+          <button class="icon-btn" data-action="down" ${index === list.length - 1 ? "disabled" : ""} aria-label="Move down">${icon("arrow-down")}</button>`
               : ""
           }
           <span style="margin-inline-start:4px; color:var(--icc-ink-soft); font-family:var(--font-mono); font-size:0.78rem;">${r.displayOrder ?? "—"}</span>

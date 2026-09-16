@@ -30,6 +30,7 @@
 import { protectAdminPage } from "./admin-guard.js";
 import { createCmsController, escapeHTML } from "./cms-admin.js";
 import {
+import { icon } from "../icons.js";
   CMS_DOCS,
   SECTION_TYPES,
   getSectionType,
@@ -131,7 +132,7 @@ function itemsFieldHTML(section) {
             <input type="text" data-item-field="label.ar" dir="rtl" value="${escapeHTML(item.label?.ar || "")}"
                    placeholder="${T("cms_item_label")} (AR)">
             <button type="button" class="icon-btn icon-btn--danger" data-remove-item="${i}"
-                    title="${T("admin_delete")}">🗑</button>
+                    title="${T("admin_delete")}">${icon("trash")}</button>
           </div>`
           )
           .join("") || `<p class="hint">${T("cms_no_items")}</p>`}
@@ -171,13 +172,13 @@ function sectionCardHTML(section, index) {
             ${section.visible ? T("cms_visible") : T("cms_hidden")}
           </span>
           <button type="button" class="icon-btn" data-move="up" ${index === 0 ? "disabled" : ""}
-                  aria-label="${T("admin_move_up")}">↑</button>
+                  aria-label="${T("admin_move_up")}">${icon("arrow-up")}</button>
           <button type="button" class="icon-btn" data-move="down" ${index === sections.length - 1 ? "disabled" : ""}
-                  aria-label="${T("admin_move_down")}">↓</button>
+                  aria-label="${T("admin_move_down")}">${icon("arrow-down")}</button>
           <button type="button" class="icon-btn" data-visibility
-                  title="${section.visible ? T("cms_hide") : T("cms_show")}">${section.visible ? "⏸" : "▶"}</button>
+                  title="${section.visible ? T("cms_hide") : T("cms_show")}">${section.visible ? icon("pause") : icon("play")}</button>
           <button type="button" class="icon-btn icon-btn--danger" data-remove
-                  title="${T("admin_delete")}">🗑</button>
+                  title="${T("admin_delete")}">${icon("trash")}</button>
         </div>
       </header>
       ${expanded ? `<div class="cms-card__body">${sectionBodyHTML(section)}</div>` : ""}

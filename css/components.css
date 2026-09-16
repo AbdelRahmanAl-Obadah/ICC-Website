@@ -550,4 +550,12 @@ html[dir="rtl"] .search-box { padding: 6px 20px 6px 6px; }
 }
 
 /* ---- Mobile menu backdrop -------------------------------------------------- */
-body.no-scroll { overflow: hidden; }
+/* The open mobile menu / lightbox lock the page behind them. position:fixed
+   (not just overflow:hidden) is what actually stops iOS Safari scrolling the
+   page under the overlay; js/ui.js sets `top` to the current scroll offset
+   and restores it on close, so nothing jumps. */
+body.no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}

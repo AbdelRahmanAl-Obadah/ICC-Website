@@ -36,6 +36,7 @@ import {
   ownershipEnabled,
 } from "../permissions.js";
 import { dumpCollection } from "../firestore.js";
+import { icon } from "../icons.js";
 
 const UI = () => window.ICC_ADMIN_UI;
 function lang() {
@@ -155,7 +156,7 @@ function run() {
       ({ def, hits }) => `
       <div class="gsearch-group">
         <h3 class="gsearch-group__head">
-          <span class="icn" aria-hidden="true">${def.icon}</span>
+          <span class="icn" aria-hidden="true">${icon(def.icon)}</span>
           ${T(def.labelKey)}
           <span class="tag tag--count">${hits.length}</span>
         </h3>

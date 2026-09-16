@@ -1697,3 +1697,93 @@ HTML resolves in both English and Arabic (1063 keys each, balanced).
   by major today, and `OWNERSHIP_SCOPES` takes a second scope as an entry plus a
   resolver rather than a redesign. Deliberately not expanded further, per the
   brief's instruction not to add complexity that isn't needed yet.
+
+---
+
+## Icon system and navigation pass
+
+Two changes that cut across every page: icons became SVG, and the menus were
+rebuilt.
+
+### Icons — `js/icons.js` + `css/icons.css`
+
+Every icon on the site used to be a Unicode character typed into markup or a
+template string: `✎`, `🗑`, `▦`, `⚿`, `→`. That is fine on the machine it was
+written on and unreliable everywhere else. Glyph coverage varies by font, so
+several of them fall back to an empty box on Windows; `🗑` renders as a colour
+emoji on some platforms and a mono outline on others; none of them take a
+colour, a size or a stroke weight from CSS; and a few are simply missing from
+the Arabic font stack, so they vanish when the site is switched to Arabic.
+Two of them — the arrows in "Back to the public site" — were baked into the
+*translated strings themselves*, which meant the English and Arabic versions
+pointed in opposite directions by hand.
+
+`js/icons.js` is now the single source: ~65 icons, each a 24×24 `viewBox`
+stroked with `currentColor`, so an icon inherits the colour of whatever it sits
+in — including hover and active states — with no per-icon CSS.
+
+```js
+import { icon } from "./icons.js";      // ES modules
+icon("trash")
+window.ICC_ICONS.icon("trash")          // classic scripts (js/ui.js, js/gpa.js)
+```
+
+`css/icons.css` decides size and direction in one place. Icons are sized in
+`em` by default, so one next to a heading is larger than one next to a caption
+without anyone picking a pixel value; `.icon--sm/md/lg/xl` override it where a
+component shouldn't inherit a surprising `font-size`. Directional icons —
+arrows, chevrons, the external-link mark — are mirrored under `html[dir="rtl"]`,
+and only those: a mirrored clock or magnifier just looks broken, so
+`FLIP_IN_RTL` in `js/icons.js` lists exactly which ones flip.
+
+Icons are decorative by default (`aria-hidden`), because nearly all of them sit
+beside a visible label or on a button that already carries an `aria-label`.
+Pass `{ label }` for the rare icon that is the only thing identifying a control.
+
+Admin sidebar icons are stored as **names** on each entry in `js/permissions.js`
+(`icon: "grid"`), not as characters, and resolved at render time by
+`js/admin/admin-nav.js` and `js/admin/search-admin.js`.
+
+### Navigation
+
+**Public site.** The burger is two cross-fading SVGs (menu ↔ close) rather than
+three CSS bars folding into an X. The panel animates instead of flipping
+between `display:none` and `display:block`, and is hidden from assistive tech
+while closed. Beyond the look, these were broken:
+
+- **The scroll lock dumped visitors at the top of the page.** It was
+  `overflow:hidden` on `<body>`, which iOS Safari ignores; the fix
+  (`position:fixed`) needs the scroll offset stashed and restored, which
+  wasn't happening. `lockScroll()`/`unlockScroll()` in `js/ui.js` now do
+  that, and they're a counter rather than a boolean because the menu and
+  the curriculum lightbox can both be open at once.
+- **No way out except the burger.** There is now a scrim to tap, `Escape`,
+  and close-on-hashchange for in-page anchors like `requirements.html#college`.
+- **Focus stayed behind the overlay**, so keyboard and screen-reader users
+  tabbed through links they couldn't see. Focus now moves into the panel and
+  is trapped there until it closes.
+- **The menu survived a resize into the desktop layout**, where the panel is
+  hidden but the page stayed scroll-locked behind it. It closes past the
+  breakpoint now, and the panel and scrim are `display:none` above 880px so a
+  stale `is-open` can't park an invisible full-screen scrim over the site.
+- **CMS-rendered links didn't close it.** `js/ui.js` bound clicks to the links
+  present at startup; `js/site-chrome.js` replaces those elements. Closing is
+  delegated to the panel now, so links that appear later are covered.
+- **`js/site-chrome.js` deleted the mobile language switcher.** Rendering a
+  CMS nav did `container.textContent = ""` on the whole panel, which took the
+  footer with it. The link list (`[data-nav-mobile]`) and the panel
+  (`[data-nav-panel]`) are separate elements now, so the CMS can only clear
+  the links.
+- **The mobile menu never showed the current page.** Its links carry
+  `data-nav-key` like the desktop ones, and get the same `aria-current`.
+
+**Admin panel.** The sidebar toggle was `<button><span></span></button>` with
+no CSS for that span anywhere — on a phone it rendered as an empty box. It is
+now the same menu/close pair, with a fading scrim, `Escape` to close, focus
+management, and `aria-expanded` tracked. Its link clicks are delegated too:
+`js/admin/admin-nav.js` renders the sidebar *after* `admin-ui.js` runs and
+re-renders it on every language switch, so the old per-`<a>` binding meant the
+drawer stayed open on top of the page you'd just navigated to.
+
+New i18n keys: `nav_menu_open`, `nav_menu_close`, `gpa_remove_course`,
+`lightbox_close` (EN + AR). `admin_back_to_site` lost its embedded arrow.

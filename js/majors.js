@@ -26,6 +26,7 @@ import {
   FirestoreNotConfiguredError,
 } from "./firestore.js";
 import { normalizeDriveImageUrl } from "./drive-utils.js";
+import { icon } from "./icons.js";
 
 function getMajorIdFromURL() {
   const params = new URLSearchParams(window.location.search);
@@ -64,7 +65,7 @@ function majorCardHTML(major, lang) {
       <p>${description}</p>
       <div class="major-card__foot">
         <span class="tag">${major.code || major.id}</span>
-        <a class="btn btn--ghost" href="major.html?id=${encodeURIComponent(major.id)}">${t("view_major", lang)} →</a>
+        <a class="btn btn--ghost icon-text" href="major.html?id=${encodeURIComponent(major.id)}">${t("view_major", lang)}${icon("arrow-right")}</a>
       </div>
     </article>
   `;
