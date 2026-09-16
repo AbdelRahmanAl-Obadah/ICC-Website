@@ -127,7 +127,7 @@ async function renderMajorHeader() {
   if (!id) {
     if (nameEl) nameEl.textContent = t("state_error_title", lang);
     if (descEl) descEl.textContent = t("state_error_body", lang);
-    document.title = "Major not found — ICC | GJU";
+    document.title = "Major not found — ICC | JUST";
     return null;
   }
 
@@ -138,7 +138,7 @@ async function renderMajorHeader() {
     console.error("[ICC] Failed to load major:", err);
     if (nameEl) nameEl.textContent = t("state_error_title", lang);
     if (descEl) descEl.textContent = t("state_error_body", lang);
-    document.title = "Major not found — ICC | GJU";
+    document.title = "Major not found — ICC | JUST";
     return null;
   }
 
@@ -146,7 +146,7 @@ async function renderMajorHeader() {
     if (nameEl) nameEl.textContent = t("major_not_found_title", lang);
     if (descEl) descEl.textContent = t("major_not_found_body", lang);
     if (idEl) idEl.textContent = id;
-    document.title = "Major not found — ICC | GJU";
+    document.title = "Major not found — ICC | JUST";
     return null;
   }
 
@@ -170,10 +170,10 @@ async function renderMajorHeader() {
  * fallback baked into major.html's <head>.
  */
 function updatePageMetaForMajor(name, description, majorId) {
-  const title = `${name} — ICC | GJU`;
+  const title = `${name} — ICC | JUST`;
   const desc = description
     ? description.slice(0, 160)
-    : `Curriculum tree, semester plan and subjects for ${name} at ICC — GJU.`;
+    : `Curriculum tree, semester plan and subjects for ${name} at ICC — JUST.`;
   const url = `https://icc-admins.web.app/major.html?id=${encodeURIComponent(majorId)}`;
 
   document.title = title;

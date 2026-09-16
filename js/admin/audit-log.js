@@ -125,6 +125,33 @@ export function getAuditActor() {
   return currentActor;
 }
 
+function sanitizeMetadata(value) {
+  if (value === undefined || value === null) return null;
+
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.slice(0, 20).map((item) => sanitizeMetadata(item));
+  }
+
+  if (typeof value === "object") {
+    const cleaned = {};
+    for (const [key, raw] of Object.entries(value)) {
+      const normalizedKey = String(key || "").trim();
+      const lowered = normalizedKey.toLowerCase();
+      if (["password", "token", "secret", "authorization", "cookie", "jwt", "refreshToken", "accessToken"].includes(lowered)) {
+        continue;
+      }
+      cleaned[normalizedKey] = sanitizeMetadata(raw);
+    }
+    return cleaned;
+  }
+
+  return String(value);
+}
+
 function truncate(value) {
   if (value === undefined || value === null) return null;
   let str;

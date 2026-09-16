@@ -17,7 +17,7 @@
  * ------------------------------------------------------------------------
  */
 
-// Grade → points, out of 4.2 (ICC's local scale — not an official GJU document)
+// Grade → points, out of 4.2 (ICC's local scale — not an official JUST document)
 const GPA_SCALE = [
   { grade: "A+", points: 4.2 },
   { grade: "A", points: 4.0 },

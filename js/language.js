@@ -28,10 +28,10 @@ const translations = {
     nav_brand: "Innovation & Computing Club",
 
     // Home — hero
-    hero_eyebrow: "German Jordanian University · Student Organization",
+    hero_eyebrow: "Jordan University of Science and Technology · Student Organization",
     hero_title_line1: "Innovation & Computing Club",
     hero_title_line2: "Academic resources, organized like a real curriculum.",
-    hero_desc: "ICC brings every requirement, major and subject GJU computing students need into one clear, searchable place — built by students, for students.",
+    hero_desc: "ICC brings every requirement, major and subject JUST computing students need into one clear, searchable place — built by students, for students.",
     hero_cta_majors: "Browse majors",
     hero_cta_requirements: "View requirements",
     hero_panel_majors: "Majors mapped",
@@ -43,7 +43,7 @@ const translations = {
     quick_electives: "Free Electives",
     quick_electives_desc: "Courses outside your major, open to everyone.",
     quick_university: "University Requirements",
-    quick_university_desc: "Shared across every GJU programme.",
+    quick_university_desc: "Shared across every JUST programme.",
     quick_college: "College Requirements",
     quick_college_desc: "Set by your college, before your major begins.",
     quick_majorsc: "Majors",
@@ -72,7 +72,7 @@ const translations = {
     // About
     about_title: "About ICC",
     about_index: "05",
-    about_lede: "Innovation & Computing Club is a student-run organization at the German Jordanian University, focused on making academic life easier through technology.",
+    about_lede: "Innovation & Computing Club is a student-run organization at Jordan University of Science and Technology, focused on making academic life easier through technology.",
     about_body: "We build the tools we wish existed as students — clear curriculum maps, organized requirements and a searchable home for everything computing students need to plan their degree. This platform is the club's flagship project, developed in phases and maintained by student contributors.",
     about_stat_members: "Active members",
     about_stat_majors: "Majors in progress",
@@ -80,19 +80,19 @@ const translations = {
     about_stat_phase: "Current phase",
 
     // Footer
-    footer_desc: "A student-built academic resources platform for GJU's computing community.",
+    footer_desc: "A student-built academic resources platform for JUST's computing community.",
     footer_nav: "Navigate",
     footer_lang: "Language",
-    footer_copyright: "© 2026 Innovation & Computing Club, German Jordanian University. Built by students.",
+    footer_copyright: "© 2026 Innovation & Computing Club, Jordan University of Science and Technology. Built by students.",
 
     // Requirements page
     req_page_eyebrow: "Academic Requirements",
     req_page_title: "Requirements, organized by where they come from.",
-    req_page_desc: "Every GJU computing student moves through the same three layers of requirements before specializing. Placeholder entries below stand in for the real curriculum, which will be managed through the Admin Panel in a later phase.",
+    req_page_desc: "Every JUST computing student moves through the same three layers of requirements before specializing. Placeholder entries below stand in for the real curriculum, which will be managed through the Admin Panel in a later phase.",
     req_electives_title: "Free Electives",
     req_electives_desc: "Open courses from any department, used to round out your degree.",
     req_university_title: "University Requirements",
-    req_university_desc: "Shared foundation courses required across all GJU programmes.",
+    req_university_desc: "Shared foundation courses required across all JUST programmes.",
     req_college_title: "College Requirements",
     req_college_desc: "Requirements set by your college ahead of your major coursework.",
     credit_hours: "credit hours",
