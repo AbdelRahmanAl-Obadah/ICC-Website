@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Admins — ICC Admin</title><meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../assets/images/icc-logo-icon.png">
+<link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/icons.css"><link rel="stylesheet" href="../css/components.css"><link rel="stylesheet" href="../css/responsive.css"><link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" data-page="admin-admins">
+<div class="admin-gate" data-admin-gate><div class="admin-gate__spinner"></div><p data-i18n="admin_checking_access">Checking your access…</p></div>
+<div class="admin-shell" data-admin-shell style="visibility:hidden;">
+  <aside class="admin-sidebar" id="adminSidebar" data-admin-sidebar><a href="index.html" class="admin-sidebar__brand"><img src="../assets/images/icc-logo-icon.png" alt="ICC"><span data-i18n="admin_panel_label">Admin Panel</span></a><nav class="admin-nav" data-admin-nav aria-label="Admin"></nav><div class="admin-sidebar__foot"><div class="lang-switch" role="group" aria-label="Language"><button type="button" data-lang-btn="en">EN</button><button type="button" data-lang-btn="ar">AR</button></div><div class="admin-sidebar__user"><strong data-admin-user-name>—</strong><span data-admin-user-email></span><span class="badge" data-admin-role-badge></span></div><button type="button" class="admin-sidebar__signout" data-admin-signout data-i18n="admin_sign_out">Sign out</button><a href="../admins.html" class="admin-sidebar__signout admin-sidebar__back" data-i18n="admin_back_to_site">Back to public page</a></div></aside>
+  <main class="admin-main"><div class="admin-topbar"><button type="button" class="admin-burger" data-admin-burger aria-expanded="false" aria-controls="adminSidebar" aria-label="Open menu"><span aria-hidden="true">☰</span></button><div><h1 data-i18n="admin_public_admins_title">Public admins</h1><p data-i18n="admin_public_admins_lede">Manage the people shown on the public ICC admins page.</p></div><div class="admin-topbar__actions"><button type="button" class="btn btn--primary" data-add-btn data-i18n="admin_add_public_admin">Add person</button></div></div>
+  <div class="admin-content"><section class="admin-panel"><div class="admin-panel__body"><div class="table-wrap"><table class="admin-table"><thead><tr><th data-i18n="admin_field_name_en">Name</th><th data-i18n="admin_field_title_en">Job title</th><th data-i18n="admin_status">Status</th><th data-i18n="admin_actions">Actions</th></tr></thead><tbody data-table-body></tbody></table></div><div class="state" data-empty hidden><strong data-i18n="admin_public_admins_empty">No public admins yet.</strong></div></div></section></div></main>
+</div>
+<script type="module" src="../js/icons.js"></script><script src="../js/language.js" defer></script><script src="../js/admin/admin-ui.js" defer></script><script type="module" src="../js/admin/admins-admin.js"></script>
+</body></html>

@@ -181,6 +181,13 @@ All collections are **top-level** (not nested subcollections) so semesters/subje
   prerequisite: { ar: "", en: "" },
   description: { ar: "", en: "" },
   courseUrl: "",
+  examType: "", // "midFinal" | "firstSecondFinal"
+  examResources: {
+    midFinal: ["", ""],
+    firstSecondFinal: ["", "", ""],
+  },
+  imageUrl: "",       // direct image URL OR a Google Drive sharing URL
+  imageCrop: { x: 0, y: 0, zoom: 1 },
   requirementType: "",
   displayOrder: 1,
   active: true,

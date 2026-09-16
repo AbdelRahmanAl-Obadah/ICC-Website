@@ -508,7 +508,10 @@ html[dir="rtl"] .search-box { padding: 6px 20px 6px 6px; }
   display: flex;
   flex-direction: column;
   gap: 10px;
+  cursor: pointer;
 }
+
+.subject-card:focus-visible { outline: 2px solid var(--icc-blue); outline-offset: -2px; }
 
 .subject-card__top {
   display: flex;
@@ -548,6 +551,25 @@ html[dir="rtl"] .search-box { padding: 6px 20px 6px 6px; }
   font-weight: 600;
   margin-top: auto;
 }
+
+.subject-detail-hero {
+  background: var(--icc-ink);
+  color: #fff;
+  padding: clamp(52px, 8vw, 96px) 0;
+}
+
+.subject-detail-hero .major-header__crumb { color: rgba(255,255,255,0.68); }
+.subject-detail-hero .major-header__crumb a { color: var(--icc-blue); }
+.subject-detail-hero h1 { font-size: var(--step-4); max-width: 18ch; margin-top: 16px; }
+.subject-detail-hero .hero__desc { color: rgba(255,255,255,0.72); max-width: 68ch; margin: 0; }
+.subject-detail__facts { display: flex; flex-wrap: wrap; gap: 10px 24px; color: var(--icc-ink-soft); font-family: var(--font-mono); font-size: 0.82rem; }
+.subject-detail__description { max-width: 70ch; font-size: 1.05rem; margin: 24px 0 48px; }
+.resource-section { border-top: var(--border); padding-top: 32px; }
+.resource-section .section-head p { color: var(--icc-ink-soft); margin: 0; }
+.resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.resource-link { border: var(--border); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; color: var(--icc-blue-dim); font-weight: 600; }
+.resource-link:hover { border-color: var(--icc-blue); background: var(--icc-blue-tint); }
+.resource-link .icon { width: 16px; height: 16px; }
 
 /* ---- Mobile menu backdrop -------------------------------------------------- */
 /* The open mobile menu / lightbox lock the page behind them. position:fixed

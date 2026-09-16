@@ -57,8 +57,8 @@ import {
   reorderDocs,
 } from "../firestore.js";
 import { can, ACTIONS, filterOwned, ownsRecord } from "../permissions.js";
-import {
 import { icon } from "../icons.js";
+import {
   T,
   lang,
   escapeHTML,
@@ -410,6 +410,32 @@ function requirementTypeOptions(selected) {
   );
 }
 
+function examTypeOptions(selected) {
+  const types = [
+    ["midFinal", "admin_exam_type_mid_final"],
+    ["firstSecondFinal", "admin_exam_type_first_second_final"],
+  ];
+  return `<option value="">—</option>${types
+    .map(([value, labelKey]) => `<option value="${value}"${value === selected ? " selected" : ""}>${T(labelKey)}</option>`)
+    .join("")}`;
+}
+
+function examResourceInputsHTML(subject, type) {
+  const labels = type === "midFinal"
+    ? ["admin_exam_link_mid", "admin_exam_link_final"]
+    : type === "firstSecondFinal"
+    ? ["admin_exam_link_first", "admin_exam_link_second", "admin_exam_link_final"]
+    : [];
+  const existing = subject.examResources?.[type] || [];
+  const legacy = type === subject.examType && subject.examUrl ? [subject.examUrl] : [];
+  const values = existing.length ? existing : legacy;
+  return labels.map((labelKey, index) => `
+    <div class="form-field">
+      <label>${T(labelKey)}</label>
+      <input type="url" name="examResource_${index}" value="${escapeHTML(values[index] || "")}" placeholder="https://...">
+    </div>`).join("");
+}
+
 /**
  * The prerequisite picker.
  *
@@ -541,6 +567,18 @@ function formHTML(subj) {
         <input type="url" name="courseUrl" value="${escapeHTML(s.courseUrl || "")}">
       </div>
 
+      <fieldset class="admin-fieldset">
+        <legend>${T("admin_subject_resources_legend")}</legend>
+        <p class="hint">${T("admin_subject_resources_hint")}</p>
+        <div class="admin-form__row">
+          <div class="form-field" data-exam-type-field>
+            <label>${T("admin_field_exam_type")}</label>
+            <select name="examType">${examTypeOptions(s.examType || "")}</select>
+          </div>
+        </div>
+        <div class="admin-form__row" data-exam-resources-mount></div>
+      </fieldset>
+
       <div class="admin-form__row">
         <div class="form-field">
           <label>${T("admin_field_display_order")}</label>
@@ -623,6 +661,15 @@ function wireCascade(form, subj) {
   first = false;
 }
 
+function wireExamResources(form, subj) {
+  const select = form.querySelector("[name=examType]");
+  const mount = form.querySelector("[data-exam-resources-mount]");
+  if (!select || !mount) return;
+  const render = () => { mount.innerHTML = examResourceInputsHTML(subj, select.value); };
+  select.addEventListener("change", render);
+  render();
+}
+
 function readForm(form) {
   const fd = new FormData(form);
   return {
@@ -640,6 +687,11 @@ function readForm(form) {
     prerequisiteIds: fd.getAll("prerequisiteIds").map((v) => v.toString()),
     description: readBilingual(fd, "description"),
     courseUrl: (fd.get("courseUrl") || "").toString().trim(),
+    examType: (fd.get("examType") || "").toString(),
+    examResources: {
+      midFinal: [0, 1].map((index) => (fd.get(`examResource_${index}`) || "").toString().trim()),
+      firstSecondFinal: [0, 1, 2].map((index) => (fd.get(`examResource_${index}`) || "").toString().trim()),
+    },
     displayOrder: Number(fd.get("displayOrder")) || 0,
     active: fd.get("active") === "on",
   };
@@ -738,6 +790,7 @@ function openForm(subj, preset = {}) {
   wrap.innerHTML = formHTML(seed);
   const form = wrap.querySelector("[data-subject-form]");
   wireCascade(form, seed);
+  wireExamResources(form, seed);
   wrap.querySelector("[data-cancel]").addEventListener("click", () => UI().closeModal());
 
   form.addEventListener("submit", async (e) => {

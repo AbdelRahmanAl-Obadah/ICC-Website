@@ -41,6 +41,8 @@
     align-items: flex-start;
     gap: 8px;
   }
+  .resource-grid { grid-template-columns: 1fr; }
+  .subject-detail-hero h1 { font-size: var(--step-3); }
 
   .card-grid { grid-template-columns: 1fr; }
   .quick-grid { grid-template-columns: 1fr; }

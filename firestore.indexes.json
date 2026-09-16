@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "publicAdmins",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "active", "order": "ASCENDING" },
+        { "fieldPath": "displayOrder", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "majors",
       "queryScope": "COLLECTION",
       "fields": [

@@ -335,6 +335,17 @@ export const PERMISSIONS = [
     ownership: null,
   },
   {
+    key: "publicAdmins",
+    collection: "publicAdmins",
+    page: "admins.html",
+    icon: "users",
+    group: "website",
+    labelKey: "perm_publicAdmins",
+    actions: ["view", "create", "edit", "delete", "publish"],
+    workflow: false,
+    ownership: null,
+  },
+  {
     key: "navigation",
     collection: "siteConfig",
     page: "navigation.html",

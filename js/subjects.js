@@ -49,6 +49,10 @@ function subjectCardHTML(subject, lang) {
   const name = subject.name?.[lang] || subject.name?.en || subject.code || "";
   const prereq = subject.prerequisite?.[lang] || subject.prerequisite?.en || "";
   const description = subject.description?.[lang] || subject.description?.en || "";
+  const detailsLink = `<a class="subject-card__link icon-text" href="subject.html?id=${encodeURIComponent(subject.id)}">${t(
+    "subject_view_details",
+    lang
+  )}${icon("arrow-right")}</a>`;
   const link = subject.courseUrl
     ? `<a class="subject-card__link icon-text" href="${subject.courseUrl}" target="_blank" rel="noopener">${t(
         "course_link",
@@ -57,7 +61,7 @@ function subjectCardHTML(subject, lang) {
     : "";
 
   return `
-    <div class="subject-card">
+    <div class="subject-card" role="link" tabindex="0" data-subject-href="subject.html?id=${encodeURIComponent(subject.id)}">
       <div class="subject-card__top">
         <div>
           ${subject.code ? `<div class="subject-card__code">${subject.code}</div>` : ""}
@@ -69,7 +73,7 @@ function subjectCardHTML(subject, lang) {
         <span>${prereq ? `${t("prereq_label", lang)}: ${prereq}` : "—"}</span>
       </div>
       ${description ? `<p class="subject-card__desc">${description}</p>` : ""}
-      ${link}
+      ${detailsLink}${link}
     </div>
   `;
 }
@@ -152,6 +156,19 @@ function renderFromCache() {
     `
     )
     .join("");
+
+  mount.querySelectorAll("[data-subject-href]").forEach((card) => {
+    const open = () => { window.location.href = card.dataset.subjectHref; };
+    card.addEventListener("click", (event) => {
+      if (!event.target.closest("a")) open();
+    });
+    card.addEventListener("keydown", (event) => {
+      if ((event.key === "Enter" || event.key === " ") && !event.target.closest("a")) {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
 }
 
 async function loadAndRender(majorId) {

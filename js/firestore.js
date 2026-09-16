@@ -465,6 +465,40 @@ export async function deleteSubject(subjectId) {
   await deleteDoc(doc(dbRef, "subjects", subjectId));
 }
 
+/* ========================================================================
+   PUBLIC ADMIN DIRECTORY
+   ======================================================================== */
+
+export async function getActivePublicAdmins() {
+  const dbRef = requireDb("getActivePublicAdmins");
+  const q = query(collection(dbRef, "publicAdmins"), where("active", "==", true), orderBy("displayOrder", "asc"));
+  const snap = await getDocs(q);
+  return snapshotToArray(snap);
+}
+
+export async function getAllPublicAdmins() {
+  const dbRef = requireDb("getAllPublicAdmins");
+  const q = query(collection(dbRef, "publicAdmins"), orderBy("displayOrder", "asc"));
+  const snap = await getDocs(q);
+  return snapshotToArray(snap);
+}
+
+export async function createPublicAdmin(data) {
+  const dbRef = requireDb("createPublicAdmin");
+  const ref = await addDoc(collection(dbRef, "publicAdmins"), { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+  return ref.id;
+}
+
+export async function updatePublicAdmin(id, data) {
+  const dbRef = requireDb("updatePublicAdmin");
+  await updateDoc(doc(dbRef, "publicAdmins", id), { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function deletePublicAdmin(id) {
+  const dbRef = requireDb("deletePublicAdmin");
+  await deleteDoc(doc(dbRef, "publicAdmins", id));
+}
+
 /* ==========================================================================
    REQUIREMENTS
    ========================================================================== */

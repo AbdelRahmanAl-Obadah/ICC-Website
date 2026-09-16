@@ -495,6 +495,13 @@ service cloud.firestore {
         || (settingId != "appearance" && can("settings", "edit"));
     }
 
+    match /publicAdmins/{adminId} {
+      allow read: if resource.data.active == true || canView("publicAdmins");
+      allow create: if can("publicAdmins", "create");
+      allow update: if can("publicAdmins", "edit") && (resource.data.active == request.resource.data.active || can("publicAdmins", "publish"));
+      allow delete: if can("publicAdmins", "delete");
+    }
+
     /* ================================================================
        USERS — accounts, roles, the matrix and ownership
        ================================================================ */
