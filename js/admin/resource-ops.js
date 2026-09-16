@@ -40,8 +40,8 @@ import {
   getPermission,
 } from "../permissions.js";
 import { logAction } from "./audit-log.js";
-import {
 import { icon } from "../icons.js";
+import {
   saveVersion,
   getDependents,
   deleteDependents,

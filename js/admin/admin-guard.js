@@ -84,6 +84,27 @@ function goToLogin(reason) {
   window.location.replace(`${LOGIN_PATH}${suffix}`);
 }
 
+function showAccessError(error) {
+  console.error("[ICC Admin] Authorization check failed:", error);
+  const gate = document.querySelector("[data-admin-gate]");
+  if (!gate) return;
+  gate.innerHTML = `
+    <div class="admin-forbidden">
+      <div class="admin-forbidden__code">!</div>
+      <h1>${T("admin_access_check_failed")}</h1>
+      <p>${T("admin_access_check_failed_body")}</p>
+      <button type="button" class="btn btn--primary" onclick="location.reload()">${T("admin_try_again")}</button>
+    </div>`;
+  gate.hidden = false;
+}
+
+function withTimeout(promise, milliseconds) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("Authorization request timed out")), milliseconds)),
+  ]);
+}
+
 /* ---------------------------------------------------------------------
    403 — signed in, authorized for the panel, not for THIS page
    --------------------------------------------------------------------- */
@@ -173,14 +194,27 @@ export function protectAdminPage(permissionKey, onReady) {
   }
 
   showGate();
+  let settled = false;
+  const accessTimeout = setTimeout(() => {
+    if (!settled) showAccessError(new Error("Firebase Auth initialization timed out"));
+  }, 10000);
 
   onAuthStateChanged(async (user) => {
+    if (settled) return;
+    settled = true;
+    clearTimeout(accessTimeout);
     if (!user) {
       goToLogin();
       return;
     }
 
-    const profile = await getProfile(user);
+    let profile;
+    try {
+      profile = await withTimeout(getProfile(user), 10000);
+    } catch (error) {
+      showAccessError(error);
+      return;
+    }
 
     // Not a recognized account at all.
     if (!profile) {

@@ -58,6 +58,7 @@ import {
 } from "../firestore.js";
 import { can, ACTIONS, filterOwned, ownsRecord } from "../permissions.js";
 import { icon } from "../icons.js";
+import { importComputerSciencePlan } from "./cs-plan-import.js";
 import {
   T,
   lang,
@@ -1136,6 +1137,23 @@ function wireToolbar() {
 document.addEventListener("DOMContentLoaded", () => {
   protectAdminPage(SECTION, async (_user, adminProfile) => {
     profile = adminProfile;
+    const importButton = document.querySelector("[data-import-cs]");
+    if (importButton) {
+      importButton.hidden = !can(profile, SECTION, ACTIONS.CREATE);
+      importButton.addEventListener("click", async () => {
+        importButton.disabled = true;
+        try {
+          const result = await importComputerSciencePlan(profile, UI(), T);
+          if (result) UI().successToast(T("admin_import_cs_success").replace("{semesters}", result.createdSemesters).replace("{subjects}", result.createdSubjects));
+          await loadAll();
+        } catch (error) {
+          console.error("[ICC Admin] CS plan import failed:", error);
+          UI().errorToast(error.message || T("admin_error_generic"));
+        } finally {
+          importButton.disabled = false;
+        }
+      });
+    }
     wireTable();
     wireToolbar();
     await loadAll();

@@ -218,6 +218,9 @@ const translations = {
     admin_sign_out: "Sign out",
     admin_panel_label: "Admin Panel",
     admin_checking_access: "Checking your access…",
+    admin_access_check_failed: "Unable to verify access",
+    admin_access_check_failed_body: "Firebase did not respond in time. Check your connection and try again.",
+    admin_try_again: "Try again",
 
     // Admin Panel — dashboard
     admin_dash_title: "Dashboard",
@@ -234,6 +237,11 @@ const translations = {
 
     // Admin Panel — common CRUD
     admin_add: "Add",
+    admin_import_cs: "Import CS plan",
+    admin_import_cs_confirm: "Import the Computer Science curriculum? Existing matching subjects will be skipped.",
+    admin_import_cs_missing_major: "Computer Science major was not found.",
+    admin_import_cs_success: "Imported {semesters} semesters and {subjects} subjects.",
+    admin_import_no_permission: "You do not have permission to import subjects.",
     admin_edit: "Edit",
     admin_duplicate: "Duplicate",
     admin_delete: "Delete",
@@ -1475,6 +1483,9 @@ const translations = {
     admin_sign_out: "تسجيل الخروج",
     admin_panel_label: "لوحة تحكم المشرف",
     admin_checking_access: "جارٍ التحقق من صلاحياتك…",
+    admin_access_check_failed: "تعذر التحقق من الصلاحيات",
+    admin_access_check_failed_body: "لم يستجب Firebase في الوقت المحدد. تحقق من الاتصال وحاول مرة أخرى.",
+    admin_try_again: "حاول مرة أخرى",
 
     // Admin Panel — dashboard
     admin_dash_title: "لوحة التحكم",
@@ -1491,6 +1502,11 @@ const translations = {
 
     // Admin Panel — common CRUD
     admin_add: "إضافة",
+    admin_import_cs: "استيراد خطة علوم الحاسوب",
+    admin_import_cs_confirm: "هل تريد استيراد خطة علوم الحاسوب؟ سيتم تجاوز المواد المطابقة الموجودة مسبقًا.",
+    admin_import_cs_missing_major: "لم يتم العثور على تخصص علوم الحاسوب.",
+    admin_import_cs_success: "تم استيراد {semesters} فصول و{subjects} مواد.",
+    admin_import_no_permission: "ليس لديك صلاحية استيراد المواد.",
     admin_edit: "تعديل",
     admin_duplicate: "نسخ",
     admin_delete: "حذف",

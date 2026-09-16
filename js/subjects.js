@@ -135,11 +135,12 @@ function renderFromCache() {
         ${yearBlock.semesters
           .map((sem) => {
             const semesterLabel = sem.name?.[lang] || sem.name?.en || `${t("semester_label", lang)} ${sem.semesterNumber ?? ""}`;
+            const semesterCredits = sem.subjects.reduce((total, subject) => total + (Number(subject.creditHours) || 0), 0);
             return `
           <div class="semester">
             <div class="semester__head">
               <span>${semesterLabel}</span>
-              <span class="tag">${sem.subjects.length} × ${t("credit_hours", lang)}</span>
+              <span class="tag">${semesterCredits} ${t("credit_hours", lang)}</span>
             </div>
             <div class="subject-grid">
               ${

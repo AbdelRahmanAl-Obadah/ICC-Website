@@ -485,6 +485,15 @@ select:focus-visible,
   gap: 12px;
 }
 
+.footer__creator {
+  display: block;
+  width: fit-content;
+  margin-top: 5px;
+  color: var(--icc-blue);
+  font-weight: 600;
+}
+.footer__creator:hover { color: #fff; text-decoration: underline; }
+
 /* ==========================================================================
    States: loading / empty / error
    ========================================================================== */

@@ -24,7 +24,8 @@
 
 .admin-card__avatar {
   width: 100%;
-  height: 220px;
+  aspect-ratio: 1;
+  height: auto;
   margin: 0;
   border-radius: 0;
   display: grid;
@@ -37,13 +38,14 @@
 }
 
 .admin-card__media {
-  height: 220px;
+  aspect-ratio: 1;
+  height: auto;
   overflow: hidden;
   background: var(--icc-gray-soft);
 }
 .admin-card__photo {
   width: 100%;
-  height: 220px;
+  height: 100%;
   object-fit: cover;
   display: block;
   transform-origin: center;
@@ -51,7 +53,8 @@
 .admin-card__body { padding: 22px 22px 26px; }
 .admin-card__avatar {
   width: 100%;
-  height: 220px;
+  aspect-ratio: 1;
+  height: auto;
   margin: 0;
   border-radius: 0;
 }

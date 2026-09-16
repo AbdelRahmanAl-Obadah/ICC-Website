@@ -16,8 +16,8 @@ function value(record, field) { return record?.[field]?.["en"] || ""; }
 function cropOf(record) { return { x: Number(record.imageCrop?.x) || 0, y: Number(record.imageCrop?.y) || 0, zoom: Number(record.imageCrop?.zoom) || 1 }; }
 function cropEditorHTML(record) {
   const crop = cropOf(record);
-  const image = `<img data-crop-image src="${esc(normalizeDriveImageUrl(record.imageUrl || ""))}" alt="Image crop preview"${record.imageUrl ? "" : " hidden"}>`;
-  return `<div class="image-cropper" data-cropper><div class="image-cropper__viewport" data-crop-viewport>${image}</div><p class="hint">Drag the image to choose the visible area. Use the zoom slider to enlarge it.</p><input type="range" min="1" max="3" step="0.05" value="${crop.zoom}" data-crop-zoom aria-label="Image zoom"><input type="hidden" name="cropX" value="${crop.x}"><input type="hidden" name="cropY" value="${crop.y}"><input type="hidden" name="cropZoom" value="${crop.zoom}"></div>`;
+  const image = `<img data-crop-image draggable="false" src="${esc(normalizeDriveImageUrl(record.imageUrl || ""))}" alt="Image crop preview"${record.imageUrl ? "" : " hidden"}>`;
+  return `<div class="image-cropper" data-cropper><div class="image-cropper__viewport" data-crop-viewport>${image}<span class="image-cropper__empty" data-crop-empty>No image preview</span><span class="image-cropper__shade" aria-hidden="true"></span><span class="image-cropper__square" aria-hidden="true"></span></div><div class="image-cropper__controls"><button type="button" class="crop-button" data-crop-minus aria-label="Zoom out">−</button><label class="crop-zoom-label">Zoom <input type="range" min="1" max="3" step="0.05" value="${crop.zoom}" data-crop-zoom aria-label="Image zoom"></label><button type="button" class="crop-button" data-crop-plus aria-label="Zoom in">+</button><button type="button" class="btn btn--ghost btn--sm" data-crop-reset>Reset</button></div><p class="hint">Drag the image inside the square to choose the visible area.</p><input type="hidden" name="cropX" value="${crop.x}"><input type="hidden" name="cropY" value="${crop.y}"><input type="hidden" name="cropZoom" value="${crop.zoom}"></div>`;
 }
 function wireCropper(form) {
   const cropper = form.querySelector("[data-cropper]");
@@ -31,13 +31,30 @@ function wireCropper(form) {
   let y = Number(yField.value) || 0;
   let zoom = Number(zoomField.value) || 1;
   let start = null;
-  const paint = () => { image.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`; xField.value = x; yField.value = y; zoomField.value = zoom; };
-  viewport.addEventListener("pointerdown", (event) => { start = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, originX: x, originY: y }; viewport.setPointerCapture(event.pointerId); });
-  viewport.addEventListener("pointermove", (event) => { if (!start) return; x = start.originX + event.clientX - start.x; y = start.originY + event.clientY - start.y; paint(); });
-  viewport.addEventListener("pointerup", () => { start = null; });
-  viewport.addEventListener("pointercancel", () => { start = null; });
+  const pointers = new Map();
+  let pinchStart = null;
+  const clamp = () => {
+    const maxX = viewport.clientWidth * Math.max(0, zoom - 1) / 2;
+    const maxY = viewport.clientHeight * Math.max(0, zoom - 1) / 2;
+    x = Math.min(maxX, Math.max(-maxX, x));
+    y = Math.min(maxY, Math.max(-maxY, y));
+  };
+  const paint = () => { clamp(); image.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`; xField.value = Math.round(x); yField.value = Math.round(y); zoomField.value = zoom; };
+  const distance = () => { const points = [...pointers.values()]; return points.length < 2 ? 0 : Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY); };
+  viewport.addEventListener("dragstart", (event) => event.preventDefault());
+  viewport.addEventListener("pointerdown", (event) => { event.preventDefault(); pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY }); viewport.setPointerCapture(event.pointerId); if (pointers.size === 1) start = { x: event.clientX, y: event.clientY, originX: x, originY: y }; if (pointers.size === 2) pinchStart = { distance: distance(), zoom }; });
+  viewport.addEventListener("pointermove", (event) => { if (!pointers.has(event.pointerId)) return; event.preventDefault(); pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY }); if (pointers.size >= 2 && pinchStart) { zoom = Math.min(3, Math.max(1, pinchStart.zoom * distance() / pinchStart.distance)); form.querySelector("[data-crop-zoom]").value = zoom; paint(); return; } if (!start) return; x = start.originX + event.clientX - start.x; y = start.originY + event.clientY - start.y; paint(); });
+  viewport.addEventListener("pointerup", (event) => { start = null; viewport.releasePointerCapture?.(event.pointerId); });
+  viewport.addEventListener("pointerup", (event) => { pointers.delete(event.pointerId); pinchStart = pointers.size < 2 ? null : pinchStart; });
+  viewport.addEventListener("pointercancel", (event) => { pointers.delete(event.pointerId); start = null; pinchStart = null; });
   form.querySelector("[data-crop-zoom]").addEventListener("input", (event) => { zoom = Number(event.target.value) || 1; paint(); });
-  form.querySelector("[data-image-url]").addEventListener("change", (event) => { image.src = normalizeDriveImageUrl(event.target.value.trim()); image.hidden = !event.target.value.trim(); paint(); });
+  form.querySelector("[data-crop-minus]").addEventListener("click", () => { zoom = Math.max(1, zoom - 0.1); form.querySelector("[data-crop-zoom]").value = zoom; paint(); });
+  form.querySelector("[data-crop-plus]").addEventListener("click", () => { zoom = Math.min(3, zoom + 0.1); form.querySelector("[data-crop-zoom]").value = zoom; paint(); });
+  viewport.addEventListener("wheel", (event) => { event.preventDefault(); zoom = Math.min(3, Math.max(1, zoom + (event.deltaY < 0 ? 0.1 : -0.1))); form.querySelector("[data-crop-zoom]").value = zoom; paint(); }, { passive: false });
+  form.querySelector("[data-crop-reset]").addEventListener("click", () => { x = 0; y = 0; zoom = 1; form.querySelector("[data-crop-zoom]").value = "1"; paint(); });
+  form.querySelector("[data-image-url]").addEventListener("input", (event) => { image.src = normalizeDriveImageUrl(event.target.value.trim()); image.hidden = !event.target.value.trim(); image.closest("[data-crop-viewport]").querySelector("[data-crop-empty]").hidden = Boolean(event.target.value.trim()); x = 0; y = 0; zoom = 1; form.querySelector("[data-crop-zoom]").value = "1"; paint(); });
+  image.addEventListener("load", paint);
+  form.querySelector("[data-crop-empty]").hidden = Boolean(form.querySelector("[data-image-url]").value.trim());
   paint();
 }
 function formHTML(record = {}) {

@@ -451,9 +451,21 @@
 .admin-modal__box:has([data-person-form]) .form-fieldset,
 .admin-modal__box:has([data-person-form]) .image-cropper { border: 1px solid var(--icc-gray); border-radius: var(--radius); padding: 16px; background: var(--icc-gray-soft); }
 .admin-modal__box:has([data-person-form]) .image-cropper { max-width: 420px; }
-.admin-modal__box:has([data-person-form]) .image-cropper__viewport { height: 240px; border: 2px solid var(--icc-blue); background: #dfe4e7; border-radius: var(--radius); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7); }
+.admin-modal__box:has([data-person-form]) .image-cropper__viewport { position: relative; width: min(100%, 440px); aspect-ratio: 1; height: auto; border: 0; background: #20262b; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); overflow: hidden; cursor: grab; touch-action: none; }
+.admin-modal__box:has([data-person-form]) .image-cropper__viewport:active { cursor: grabbing; }
 .admin-modal__box:has([data-person-form]) .image-cropper__viewport img { width: 100%; height: 100%; object-fit: cover; }
+.admin-modal__box:has([data-person-form]) .image-cropper__viewport img { user-select: none; -webkit-user-drag: none; }
+.admin-modal__box:has([data-person-form]) .image-cropper__shade { display: none; }
+.admin-modal__box:has([data-person-form]) .image-cropper__square { position: absolute; inset: 0; border: 2px solid rgba(255,255,255,0.96); box-shadow: 0 0 0 1px rgba(0,0,0,0.3); pointer-events: none; }
+.admin-modal__box:has([data-person-form]) .image-cropper__empty { position: absolute; inset: 0; }
+.admin-modal__box:has([data-person-form]) .crop-zoom-label { min-width: 0; }
+.admin-modal__box:has([data-person-form]) .crop-button { width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid var(--icc-gray); border-radius: 50%; background: var(--icc-white); color: var(--icc-ink); font-size: 1.25rem; line-height: 1; }
+.admin-modal__box:has([data-person-form]) .crop-button:hover { border-color: var(--icc-blue); color: var(--icc-blue-dim); }
+.admin-modal__box:has([data-person-form]) .image-cropper__controls { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+.admin-modal__box:has([data-person-form]) .image-cropper__controls label { display: flex; align-items: center; gap: 10px; flex: 1; }
 .admin-modal__box:has([data-person-form]) .image-cropper input[type="range"] { width: 100%; accent-color: var(--icc-blue); }
+.admin-modal__box:has([data-person-form]) .image-cropper__empty { display: grid; place-items: center; height: 100%; color: var(--icc-ink-soft); font-size: 0.8rem; }
+.admin-modal__box:has([data-person-form]) .image-cropper__empty[hidden] { display: none; }
 .admin-modal__box:has([data-person-form]) .admin-form__actions { border-top: var(--border); margin-top: 4px; padding-top: 20px; }
 .admin-modal__warning {
   background: #FFF6E9;
