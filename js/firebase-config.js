@@ -17,10 +17,11 @@
  */
 
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyCK5L2vyhRFd2_u-N9xnil91DUxpjwQ9tM",
+  authDomain: "icc-admins.firebaseapp.com",
+  projectId: "icc-admins",
+  storageBucket: "icc-admins.firebasestorage.app",
+  messagingSenderId: "143567367923",
+  appId: "1:143567367923:web:7f82e82c6fc0624934d186",
+  measurementId: "G-FKXHN83DM2",
 };

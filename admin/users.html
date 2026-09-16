@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Users &amp; Admins — ICC Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../assets/images/icc-logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" data-page="admin-users">
+
+<!-- Auth gate: shown until admin-guard.js confirms an authorized admin who
+     actually holds the "users" permission. The shell below stays
+     visibility:hidden until then, and firestore.rules reject unauthorized
+     reads and writes regardless of what happens in the browser. -->
+<div class="admin-gate" data-admin-gate>
+  <div class="admin-gate__spinner" aria-hidden="true"></div>
+  <p data-i18n="admin_checking_access">Checking your access…</p>
+</div>
+
+<div class="admin-shell" data-admin-shell style="visibility:hidden;">
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <a href="index.html" class="admin-sidebar__brand">
+      <img src="../assets/images/icc-logo-icon.png" alt="ICC">
+      <span data-i18n="admin_panel_label">Admin Panel</span>
+    </a>
+
+    <nav class="admin-nav" data-admin-nav aria-label="Admin">
+      <!-- Rendered by js/admin/admin-nav.js from the signed-in user's
+           permissions. A Super Admin sees every section; an Admin sees
+           only what they are authorized to manage. -->
+    </nav>
+
+    <div class="admin-sidebar__foot">
+      <div class="lang-switch" role="group" aria-label="Language" style="margin-bottom:12px;">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+      <div class="admin-sidebar__user">
+        <strong data-admin-user-name>—</strong>
+        <span data-admin-user-email></span>
+        <span class="badge" data-admin-role-badge></span>
+      </div>
+      <button type="button" class="admin-sidebar__signout" data-admin-signout data-i18n="admin_sign_out">Sign out</button>
+      <a href="../index.html" class="admin-sidebar__signout" style="display:block; text-align:center; margin-top:8px; text-decoration:none;" data-i18n="admin_back_to_site">← Back to the public site</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button type="button" class="admin-burger" data-admin-burger aria-label="Menu"><span></span></button>
+      <div>
+        <h1 data-i18n="admin_users_title">Users &amp; Admins</h1>
+        <p data-i18n="admin_users_lede">Approve registrations, manage accounts and delegate permissions.</p>
+      </div>
+      <div class="admin-topbar__actions">
+        <button type="button" class="btn btn--primary" data-add-admin hidden><span data-i18n="admin_users_add_admin">Add admin</span></button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="admin-stats admin-stats--compact">
+        <div class="admin-stat-card"><strong data-stat="pending">—</strong><span data-i18n="admin_stat_pending">Pending approval</span></div>
+        <div class="admin-stat-card"><strong data-stat="admins">—</strong><span data-i18n="admin_stat_admins">Administrators</span></div>
+        <div class="admin-stat-card"><strong data-stat="active">—</strong><span data-i18n="admin_stat_active_users">Active users</span></div>
+        <div class="admin-stat-card"><strong data-stat="total">—</strong><span data-i18n="admin_stat_total_users">Total accounts</span></div>
+      </div>
+
+      <!-- Pending registrations sit above the main table because an
+           unanswered request is the only thing on this screen actively
+           waiting on a human decision. -->
+      <section class="admin-panel" data-pending-panel hidden>
+        <div class="admin-panel__head">
+          <h2 data-i18n="admin_pending_title">Pending registration requests</h2>
+        </div>
+        <div class="admin-panel__body">
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th class="wrap"><span data-i18n="admin_field_name">Name</span></th>
+                  <th class="wrap"><span data-i18n="admin_field_email">Email</span></th>
+                  <th><span data-i18n="admin_field_requested">Requested</span></th>
+                  <th><span data-i18n="admin_actions">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody data-pending-body></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel__body">
+          <div class="admin-toolbar">
+            <input type="search" data-search data-i18n-attr="placeholder:admin_search_placeholder" placeholder="Search…" aria-label="Search">
+            <select data-role-filter aria-label="Role">
+              <option value="all" data-i18n="admin_filter_all_roles">All roles</option>
+              <option value="superadmin" data-i18n="role_superadmin">Super Admin</option>
+              <option value="admin" data-i18n="role_admin">Admin</option>
+              <option value="user" data-i18n="role_user">User</option>
+            </select>
+            <select data-status-filter aria-label="Status">
+              <option value="all" data-i18n="admin_filter_all">All</option>
+              <option value="active" data-i18n="status_active">Active</option>
+              <option value="pending" data-i18n="status_pending">Pending</option>
+              <option value="disabled" data-i18n="status_disabled">Disabled</option>
+              <option value="rejected" data-i18n="status_rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div data-state-mount></div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" data-table hidden>
+              <thead>
+                <tr>
+                  <th class="wrap"><span data-i18n="admin_field_name">Name</span></th>
+                  <th class="wrap"><span data-i18n="admin_field_email">Email</span></th>
+                  <th><span data-i18n="admin_field_uid">UID</span></th>
+                  <th><span data-i18n="admin_field_role">Role</span></th>
+                  <th><span data-i18n="admin_status">Status</span></th>
+                  <th><span data-i18n="admin_field_created">Created</span></th>
+                  <th><span data-i18n="admin_field_updated">Updated</span></th>
+                  <th><span data-i18n="admin_field_permissions">Permissions</span></th>
+                  <th><span data-i18n="admin_actions">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody data-table-body></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+</div>
+
+<script src="../js/language.js" defer></script>
+<script src="../js/admin/admin-ui.js" defer></script>
+<script type="module" src="../js/admin/users-admin.js"></script>
+</body>
+</html>

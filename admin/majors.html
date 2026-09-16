@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Majors — ICC Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../assets/images/icc-logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" data-page="admin-majors">
+
+<!-- Auth gate: shown until admin-guard.js confirms an authorized admin.
+     The shell below stays visibility:hidden until then, and Firestore
+     rules reject unauthorized reads regardless. -->
+<div class="admin-gate" data-admin-gate>
+  <div class="admin-gate__spinner" aria-hidden="true"></div>
+  <p data-i18n="admin_checking_access">Checking your access…</p>
+</div>
+
+<div class="admin-shell" data-admin-shell style="visibility:hidden;">
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <a href="index.html" class="admin-sidebar__brand">
+      <img src="../assets/images/icc-logo-icon.png" alt="ICC">
+      <span data-i18n="admin_panel_label">Admin Panel</span>
+    </a>
+
+    <nav class="admin-nav" data-admin-nav aria-label="Admin">
+      <!-- Rendered by js/admin/admin-nav.js from the signed-in user's
+           permissions. A Super Admin sees every section; an Admin sees
+           only what they are authorized to manage. -->
+    </nav>
+
+    <div class="admin-sidebar__foot">
+      <div class="lang-switch" role="group" aria-label="Language" style="margin-bottom:12px;">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+      <div class="admin-sidebar__user">
+        <strong data-admin-user-name>—</strong>
+        <span data-admin-user-email></span>
+        <span class="badge" data-admin-role-badge></span>
+      </div>
+      <button type="button" class="admin-sidebar__signout" data-admin-signout data-i18n="admin_sign_out">Sign out</button>
+      <a href="../index.html" class="admin-sidebar__signout" style="display:block; text-align:center; margin-top:8px; text-decoration:none;" data-i18n="admin_back_to_site">← Back to the public site</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button type="button" class="admin-burger" data-admin-burger aria-label="Menu"><span></span></button>
+      <div>
+        <h1 data-i18n="admin_majors_title">Majors</h1>
+        <p data-i18n="admin_majors_lede">Manage every major offered on the public site.</p>
+      </div>
+      <div class="admin-topbar__actions">
+        <button type="button" class="btn btn--primary" data-add-btn><span data-i18n="admin_add">Add</span></button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <section class="admin-panel">
+        <div class="admin-panel__body">
+          <div class="admin-toolbar">
+            <input type="search" data-search data-i18n-attr="placeholder:admin_search_placeholder" placeholder="Search…" aria-label="Search">
+            <select data-status-filter aria-label="Status">
+              <option value="all" data-i18n="admin_filter_all">All</option>
+              <option value="published" data-i18n="wf_published">Published</option>
+              <option value="draft" data-i18n="wf_draft">Draft</option>
+              <option value="pending" data-i18n="wf_pending">Pending review</option>
+              <option value="approved" data-i18n="wf_approved">Approved</option>
+              <option value="rejected" data-i18n="wf_rejected">Rejected</option>
+              <option value="unpublished" data-i18n="wf_unpublished">Unpublished</option>
+            </select>
+          </div>
+
+          <div data-ownership-notice></div>
+          <div class="bulk-toolbar" data-bulk-toolbar hidden></div>
+          <div data-state-mount></div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table" data-table hidden>
+              <thead>
+                <tr>
+              <th data-bulk-header></th>
+              <th><span data-i18n="admin_field_display_order">Order</span></th>
+              <th class="wrap"><span data-i18n="admin_field_name_en">Name (EN)</span></th>
+              <th class="wrap"><span data-i18n="admin_field_name_ar">Name (AR)</span></th>
+              <th><span data-i18n="admin_field_code">Code</span></th>
+              <th><span data-i18n="admin_field_college">College</span></th>
+              <th><span data-i18n="admin_field_state">State</span></th>
+              <th><span data-i18n="admin_actions">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody data-table-body></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+</div>
+
+<script src="../js/language.js" defer></script>
+<script src="../js/admin/admin-ui.js" defer></script>
+<script type="module" src="../js/admin/majors-admin.js"></script>
+</body>
+</html>

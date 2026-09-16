@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — ICC | GJU</title>
+<meta name="description" content="Create an ICC account to request access to the platform.">
+<link rel="canonical" href="https://icc-admins.web.app/signup.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sign Up — ICC | GJU">
+<meta property="og:description" content="Create an ICC account to request access to the platform.">
+<meta property="og:url" content="https://icc-admins.web.app/signup.html">
+<link rel="icon" type="image/png" href="assets/images/icc-logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/appearance.css">
+<link rel="stylesheet" href="css/auth.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-page="signup">
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <img src="assets/images/icc-logo-lockup.png" class="nav__logo" data-site-logo data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
+    </a>
+
+    <nav class="nav__links" aria-label="Primary" data-cms-nav>
+      <a class="nav__link" href="index.html" data-nav-key="home" data-i18n="nav_home">Home</a>
+      <a class="nav__link" href="requirements.html" data-nav-key="requirements" data-i18n="nav_requirements">Academic Requirements</a>
+      <a class="nav__link" href="majors.html" data-nav-key="majors" data-i18n="nav_majors">Majors</a>
+      <a class="nav__link" href="search.html" data-nav-key="search" data-i18n="nav_search">Search</a>
+      <a class="nav__link" href="gpa-calculator.html" data-nav-key="gpa" data-i18n="nav_gpa">GPA Calculator</a>
+      <a class="nav__link" href="admins.html" data-nav-key="admins" data-i18n="nav_admins">ICC Admins</a>
+      <a class="nav__link nav__link--cta" href="signup.html" data-nav-key="signup" data-i18n="nav_signup">Sign Up</a>
+    </nav>
+
+    <div class="nav__actions">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+      <button type="button" class="nav__burger" data-nav-burger aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav__mobile" id="mobileNav" data-nav-mobile>
+    <a class="nav__mobile-link" href="index.html" data-i18n="nav_home">Home</a>
+    <a class="nav__mobile-link" href="requirements.html" data-i18n="nav_requirements">Academic Requirements</a>
+    <a class="nav__mobile-link" href="majors.html" data-i18n="nav_majors">Majors</a>
+    <a class="nav__mobile-link" href="search.html" data-i18n="nav_search">Search</a>
+    <a class="nav__mobile-link" href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a>
+    <a class="nav__mobile-link" href="admins.html" data-i18n="nav_admins">ICC Admins</a>
+    <a class="nav__mobile-link" href="signup.html" data-i18n="nav_signup">Sign Up</a>
+    <div class="nav__mobile-foot">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="section">
+    <div class="container container--narrow">
+
+      <div class="section-head">
+        <div>
+          <h1 data-i18n="signup_title">Create an account</h1>
+          <p class="section-lede" data-i18n="signup_lede">Register to request access to the ICC platform. New accounts are reviewed by an administrator before they are activated.</p>
+        </div>
+      </div>
+
+      <div class="auth-error" data-signup-error role="alert"></div>
+
+      <!-- ====================== REGISTRATION ====================== -->
+      <div class="auth-card" data-signup-panel>
+        <form data-signup-form class="admin-form" novalidate>
+          <div class="form-field">
+            <label for="suName" data-i18n="signup_field_name">Full name</label>
+            <input type="text" id="suName" name="displayName" autocomplete="name" required>
+          </div>
+
+          <div class="form-field">
+            <label for="suEmail" data-i18n="admin_field_email">Email</label>
+            <input type="email" id="suEmail" name="email" autocomplete="email" required>
+          </div>
+
+          <div class="form-field">
+            <label for="suPassword" data-i18n="admin_field_password">Password</label>
+            <input type="password" id="suPassword" name="password" autocomplete="new-password" minlength="8" required>
+            <p class="hint" data-i18n="signup_password_hint">At least 8 characters.</p>
+          </div>
+
+          <div class="form-field">
+            <label for="suConfirm" data-i18n="signup_field_confirm">Confirm password</label>
+            <input type="password" id="suConfirm" name="confirmPassword" autocomplete="new-password" required>
+          </div>
+
+          <div class="form-field">
+            <span class="form-check">
+              <input type="checkbox" id="suTerms" name="terms">
+              <label for="suTerms" data-i18n="signup_terms">I understand my account must be approved by an administrator before it becomes active.</label>
+            </span>
+          </div>
+
+          <!-- Stated plainly because it is the actual behaviour, enforced
+               server-side in firestore.rules: registering never grants any
+               administrative access. -->
+          <p class="auth-note" data-i18n="signup_note">Registering does not grant administrator access. Administrator permissions are assigned only by the Super Admin.</p>
+
+          <button type="submit" class="btn btn--primary btn--block" data-signup-submit>
+            <span data-i18n="signup_submit">Create account</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- ========================= SIGN IN ========================= -->
+      <div class="auth-card" data-signin-panel hidden>
+        <form data-signin-form class="admin-form" novalidate>
+          <div class="form-field">
+            <label for="siEmail" data-i18n="admin_field_email">Email</label>
+            <input type="email" id="siEmail" name="email" autocomplete="username" required>
+          </div>
+          <div class="form-field">
+            <label for="siPassword" data-i18n="admin_field_password">Password</label>
+            <input type="password" id="siPassword" name="password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn--primary btn--block" data-signin-submit>
+            <span data-i18n="admin_sign_in">Sign in</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="auth-switch">
+        <button type="button" class="btn btn--ghost" data-signin-toggle data-i18n="signup_have_account">Already have an account? Sign in</button>
+      </div>
+
+      <!-- ====================== ACCOUNT STATUS ====================== -->
+      <div class="auth-card auth-status" data-status-panel hidden>
+        <div class="auth-status__icon" data-status-icon aria-hidden="true">◷</div>
+        <h2 data-status-title></h2>
+        <p data-status-body></p>
+        <p class="auth-status__email" data-status-email></p>
+        <div class="auth-status__actions">
+          <a class="btn btn--primary" href="admin/index.html" data-status-panel-link hidden data-i18n="signup_go_to_panel">Go to the Admin Panel</a>
+          <a class="btn btn--outline" href="index.html" data-i18n="signup_back_home">Back to the site</a>
+          <button type="button" class="btn btn--ghost" data-status-signout data-i18n="admin_sign_out">Sign out</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/icc-logo-lockup-dark.png" class="footer__logo" data-site-logo-dark data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club" loading="lazy" decoding="async">
+        <p class="footer__desc" data-site-content="footer:text" data-i18n="footer_desc">A student-built academic resources platform for GJU's computing community.</p>
+      </div>
+      <div>
+        <h4 data-i18n="footer_nav">Navigate</h4>
+        <ul class="footer__links" data-cms-footer-nav>
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="requirements.html" data-i18n="nav_requirements">Academic Requirements</a></li>
+          <li><a href="majors.html" data-i18n="nav_majors">Majors</a></li>
+          <li><a href="search.html" data-i18n="nav_search">Search</a></li>
+          <li><a href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a></li>
+          <li><a href="admins.html" data-i18n="nav_admins">ICC Admins</a></li>
+          <li><a href="signup.html" data-i18n="nav_signup">Sign Up</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-i18n="footer_lang">Language</h4>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang-btn="en">EN</button>
+          <button type="button" data-lang-btn="ar">AR</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span data-i18n="footer_copyright">© 2026 Innovation & Computing Club, German Jordanian University. Built by students.</span>
+    </div>
+  </div>
+</footer>
+
+
+<script src="js/language.js" defer></script>
+<script src="js/ui.js" defer></script>
+<script type="module" src="js/appearance.js"></script>
+<script type="module" src="js/site-chrome.js"></script>
+<script type="module" src="js/signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* ==========================================================================
+   ICC — public authentication pages (signup.html)
+   Reuses the tokens from style.css and the form primitives from admin.css
+   (.admin-form / .form-field), so the sign-up form matches the panel's
+   inputs rather than introducing a second, slightly-different form style.
+   ========================================================================== */
+
+.container--narrow {
+  max-width: 560px;
+}
+
+/* ---------------------------------------------------------------------
+   Cards
+   --------------------------------------------------------------------- */
+.auth-card {
+  background: var(--icc-white);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 26px 24px;
+}
+.auth-card[hidden] { display: none; }
+
+.auth-card .form-field { margin-bottom: 16px; }
+.auth-card .form-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.auth-card .form-field input[type="text"],
+.auth-card .form-field input[type="email"],
+.auth-card .form-field input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  background: var(--icc-white);
+  color: var(--icc-ink);
+}
+.auth-card .form-field input:focus {
+  outline: 2px solid var(--icc-blue);
+  outline-offset: 1px;
+  border-color: var(--icc-blue);
+}
+.auth-card .form-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.auth-card .form-check input { margin-top: 3px; flex: none; }
+.auth-card .form-check label {
+  margin: 0;
+  font-weight: 400;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--icc-ink-soft);
+}
+.auth-card .hint {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--icc-ink-soft);
+}
+
+/* The approval disclaimer. Visually distinct because it describes a real
+   constraint on the account, not decorative small print. */
+.auth-note {
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  background: var(--icc-blue-tint);
+  border-inline-start: 3px solid var(--icc-blue);
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--icc-ink-soft);
+}
+
+/* ---------------------------------------------------------------------
+   Errors
+   --------------------------------------------------------------------- */
+.auth-error {
+  display: none;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  background: #FDECEC;
+  border: 1px solid #F5C9C9;
+  border-radius: var(--radius);
+  color: #A32020;
+  font-size: 0.87rem;
+}
+.auth-error.is-visible { display: block; }
+
+/* ---------------------------------------------------------------------
+   Switch between register / sign in
+   --------------------------------------------------------------------- */
+.auth-switch {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+/* ---------------------------------------------------------------------
+   Account status
+   --------------------------------------------------------------------- */
+.auth-status { text-align: center; }
+.auth-status__icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--icc-gray-soft);
+  color: var(--icc-ink-soft);
+  font-size: 1.5rem;
+}
+.auth-status h2 {
+  font-size: var(--step-1);
+  margin-bottom: 8px;
+}
+.auth-status p {
+  color: var(--icc-ink-soft);
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.auth-status__email {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--icc-ink);
+  margin-bottom: 20px !important;
+}
+.auth-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.auth-status__actions [hidden] { display: none; }
+
+/* ---------------------------------------------------------------------
+   Sign Up nav call-to-action
+   --------------------------------------------------------------------- */
+.nav__link--cta {
+  padding: 6px 14px;
+  border: 1px solid var(--icc-blue);
+  border-radius: var(--radius);
+  color: var(--icc-blue-dim);
+}
+.nav__link--cta:hover {
+  background: var(--icc-blue);
+  color: var(--icc-white);
+}
+
+/* ---------------------------------------------------------------------
+   Admin-controlled announcement banner (js/appearance.js)
+   --------------------------------------------------------------------- */
+.site-banner {
+  padding: 9px 16px;
+  background: var(--icc-ink);
+  color: var(--icc-white);
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------------
+   Public academic tree (js/tree.js)
+   --------------------------------------------------------------------- */
+.academic-tree__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.academic-tree > .academic-tree__list > .academic-tree__item {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--icc-white);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.academic-tree__list .academic-tree__list {
+  margin-top: 8px;
+  padding-inline-start: 18px;
+  border-inline-start: 2px solid var(--icc-gray);
+}
+.academic-tree__item { margin-bottom: 6px; }
+.academic-tree__node { font-size: 0.95rem; }
+.academic-tree__item--faculty > .academic-tree__node,
+.academic-tree__item--department > .academic-tree__node {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+.academic-tree__node a { color: var(--icc-blue-dim); text-decoration: none; }
+.academic-tree__node a:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .auth-card { padding: 20px 16px; }
+  .academic-tree__list .academic-tree__list { padding-inline-start: 12px; }
+}

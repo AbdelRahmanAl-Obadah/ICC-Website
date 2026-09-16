@@ -18,11 +18,13 @@
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 let app = null;
+let analytics = null;
 let db = null;
 let auth = null;
 
@@ -32,6 +34,7 @@ const isPlaceholderConfig = Object.values(firebaseConfig).some((value) =>
 
 if (!isPlaceholderConfig) {
   app = initializeApp(firebaseConfig);
+  analytics = getAnalytics(app);
   db = getFirestore(app);
   auth = getAuth(app);
 } else {
@@ -42,4 +45,4 @@ if (!isPlaceholderConfig) {
   );
 }
 
-export { app, db, auth };
+export { app, analytics, db, auth };

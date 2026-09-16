@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Search — ICC | GJU</title>
 <meta name="description" content="Search across ICC majors, requirements and subjects.">
+<link rel="canonical" href="https://icc-admins.web.app/search.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Search — ICC | GJU">
+<meta property="og:description" content="Search across ICC majors, requirements and subjects.">
+<meta property="og:url" content="https://icc-admins.web.app/search.html">
+<meta name="robots" content="noindex, follow">
 <link rel="icon" type="image/png" href="assets/images/icc-logo-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +18,8 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/appearance.css">
+<link rel="stylesheet" href="css/auth.css">
 <link rel="stylesheet" href="css/animations.css">
 </head>
 <body data-page="search">
@@ -20,16 +28,17 @@
 <header class="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__brand">
-      <img src="assets/images/icc-logo-lockup.png" class="nav__logo" data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
+      <img src="assets/images/icc-logo-lockup.png" class="nav__logo" data-site-logo data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
     </a>
 
-    <nav class="nav__links" aria-label="Primary">
+    <nav class="nav__links" aria-label="Primary" data-cms-nav>
       <a class="nav__link" href="index.html" data-nav-key="home" data-i18n="nav_home">Home</a>
       <a class="nav__link" href="requirements.html" data-nav-key="requirements" data-i18n="nav_requirements">Academic Requirements</a>
       <a class="nav__link" href="majors.html" data-nav-key="majors" data-i18n="nav_majors">Majors</a>
       <a class="nav__link" href="search.html" data-nav-key="search" data-i18n="nav_search">Search</a>
       <a class="nav__link" href="gpa-calculator.html" data-nav-key="gpa" data-i18n="nav_gpa">GPA Calculator</a>
       <a class="nav__link" href="admins.html" data-nav-key="admins" data-i18n="nav_admins">ICC Admins</a>
+      <a class="nav__link nav__link--cta" href="signup.html" data-nav-key="signup" data-i18n="nav_signup">Sign Up</a>
     </nav>
 
     <div class="nav__actions">
@@ -50,6 +59,7 @@
     <a class="nav__mobile-link" href="search.html" data-i18n="nav_search">Search</a>
     <a class="nav__mobile-link" href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a>
     <a class="nav__mobile-link" href="admins.html" data-i18n="nav_admins">ICC Admins</a>
+    <a class="nav__mobile-link" href="signup.html" data-i18n="nav_signup">Sign Up</a>
     <div class="nav__mobile-foot">
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang-btn="en">EN</button>
@@ -64,7 +74,7 @@
     <div class="container">
       <p class="hero__eyebrow" data-i18n="search_index">04</p>
       <h1 style="font-size: clamp(2rem, 4.4vw, 3.2rem); max-width: 22ch;" data-i18n="search_title">Search the platform</h1>
-      <p class="hero__desc" data-i18n="search_lede">Global search across majors, requirements and subjects arrives with Firestore in a later phase. This is the interface.</p>
+      <p class="hero__desc" data-i18n="search_lede">Search across every active major, subject and requirement — by name, code, or keyword, in English or Arabic.</p>
     </div>
   </section>
 
@@ -77,26 +87,34 @@
       </div>
 
       <div class="search-filters" role="group" aria-label="Filter results">
-        <button type="button" class="search-filter is-active" data-i18n="filter_all">All</button>
-        <button type="button" class="search-filter" data-i18n="filter_majors">Majors</button>
-        <button type="button" class="search-filter" data-i18n="filter_subjects">Subjects</button>
-        <button type="button" class="search-filter" data-i18n="filter_requirements">Requirements</button>
+        <button type="button" class="search-filter is-active" data-search-filter="all" data-i18n="filter_all">All</button>
+        <button type="button" class="search-filter" data-search-filter="majors" data-i18n="filter_majors">Majors</button>
+        <button type="button" class="search-filter" data-search-filter="subjects" data-i18n="filter_subjects">Subjects</button>
+        <button type="button" class="search-filter" data-search-filter="requirements" data-i18n="filter_requirements">Requirements</button>
       </div>
 
       <div style="margin-top: 32px;" data-state-container>
-        <div class="state" data-state="empty">
+        <div class="state" data-state="idle">
           <div class="state__icon" aria-hidden="true">⌕</div>
-          <strong data-i18n="state_empty_title">Nothing here yet</strong>
-          <p data-i18n="state_empty_body">This section will populate once Firestore data is connected in a later phase.</p>
+          <strong data-i18n="search_idle_title">Start typing to search</strong>
+          <p data-i18n="search_idle_body">Search across active majors, subjects and requirements — in English or Arabic.</p>
         </div>
         <div class="state" data-state="loading" hidden>
           <div class="spinner" aria-hidden="true"></div>
           <span data-i18n="state_loading">Loading content…</span>
         </div>
+        <div class="state" data-state="no-results" hidden role="status">
+          <div class="state__icon" aria-hidden="true">⌕</div>
+          <strong data-i18n="search_no_results_title">No results found</strong>
+          <p data-i18n="search_no_results_body">Try a different keyword, code, or check your spelling.</p>
+        </div>
         <div class="state state--error" data-state="error" hidden role="alert">
           <div class="state__icon" aria-hidden="true">⚠</div>
           <strong data-i18n="state_error_title">Something went wrong</strong>
           <p data-i18n="state_error_body">We couldn't load this content. Please try again shortly.</p>
+        </div>
+        <div data-state="results" hidden>
+          <div data-results-mount></div>
         </div>
       </div>
     </div>
@@ -107,18 +125,19 @@
   <div class="container">
     <div class="footer__grid">
       <div>
-        <img src="assets/images/icc-logo-lockup-dark.png" class="footer__logo" data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
-        <p class="footer__desc" data-i18n="footer_desc">A student-built academic resources platform for GJU's computing community.</p>
+        <img src="assets/images/icc-logo-lockup-dark.png" class="footer__logo" data-site-logo-dark data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club" loading="lazy" decoding="async">
+        <p class="footer__desc" data-cms-text="footer_desc" data-site-content="footer:text" data-i18n="footer_desc">A student-built academic resources platform for GJU's computing community.</p>
       </div>
       <div>
         <h4 data-i18n="footer_nav">Navigate</h4>
-        <ul class="footer__links">
+        <ul class="footer__links" data-cms-footer-nav>
           <li><a href="index.html" data-i18n="nav_home">Home</a></li>
           <li><a href="requirements.html" data-i18n="nav_requirements">Academic Requirements</a></li>
           <li><a href="majors.html" data-i18n="nav_majors">Majors</a></li>
           <li><a href="search.html" data-i18n="nav_search">Search</a></li>
           <li><a href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a></li>
           <li><a href="admins.html" data-i18n="nav_admins">ICC Admins</a></li>
+          <li><a href="signup.html" data-i18n="nav_signup">Sign Up</a></li>
         </ul>
       </div>
       <div>
@@ -130,36 +149,17 @@
       </div>
     </div>
     <div class="footer__bottom">
-      <span data-i18n="footer_copyright">© 2026 Innovation & Computing Club, German Jordanian University. Built by students.</span>
-      <span>ICC-Website · Phase 2 of 5</span>
+      <span data-cms-text="footer_copyright" data-i18n="footer_copyright">© 2026 Innovation & Computing Club, German Jordanian University. Built by students.</span>
     </div>
   </div>
 </footer>
 
-<script src="js/language.js"></script>
-<script src="js/ui.js"></script>
+<script src="js/language.js" defer></script>
+<script src="js/ui.js" defer></script>
+<script type="module" src="js/appearance.js"></script>
+<script type="module" src="js/site-content.js"></script>
+<script type="module" src="js/site-chrome.js"></script>
 <script type="module" src="js/firebase-init.js"></script>
-<script>
-  // PHASE 1: search UI only — wires filter buttons and shows the "empty"
-  // state on submit. Real querying (searchPlatform() in firestore.js)
-  // is implemented once global search ships in a later phase.
-  document.addEventListener("DOMContentLoaded", () => {
-    const filters = document.querySelectorAll(".search-filter");
-    filters.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        filters.forEach((b) => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-      });
-    });
-
-    const container = document.querySelector("[data-state-container]");
-    const runSearch = () => window.ICC_UI.setSectionState(container, "empty");
-
-    document.getElementById("searchBtn").addEventListener("click", runSearch);
-    document.getElementById("searchInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") runSearch();
-    });
-  });
-</script>
+<script type="module" src="js/search.js"></script>
 </body>
 </html>

@@ -203,12 +203,6 @@ select:focus-visible,
   color: var(--icc-ink-soft);
 }
 
-.tag--demo {
-  border-color: var(--icc-blue);
-  color: var(--icc-blue-dim);
-  background: var(--icc-blue-tint);
-}
-
 /* ==========================================================================
    Navbar
    ========================================================================== */

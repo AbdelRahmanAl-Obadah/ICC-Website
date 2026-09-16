@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — ICC Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../assets/images/icc-logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" data-page="admin-dashboard">
+
+<!-- Auth gate: shown until admin-guard.js confirms an authorized admin.
+     The shell below stays visibility:hidden until then, and Firestore
+     rules reject unauthorized reads regardless. -->
+<div class="admin-gate" data-admin-gate>
+  <div class="admin-gate__spinner" aria-hidden="true"></div>
+  <p data-i18n="admin_checking_access">Checking your access…</p>
+</div>
+
+<div class="admin-shell" data-admin-shell style="visibility:hidden;">
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <a href="index.html" class="admin-sidebar__brand">
+      <img src="../assets/images/icc-logo-icon.png" alt="ICC">
+      <span data-i18n="admin_panel_label">Admin Panel</span>
+    </a>
+
+    <nav class="admin-nav" data-admin-nav aria-label="Admin">
+      <!-- Rendered by js/admin/admin-nav.js from the signed-in user's
+           permissions. A Super Admin sees every section; an Admin sees
+           only what they are authorized to manage. -->
+    </nav>
+
+    <div class="admin-sidebar__foot">
+      <div class="lang-switch" role="group" aria-label="Language" style="margin-bottom:12px;">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+      <div class="admin-sidebar__user">
+        <strong data-admin-user-name>—</strong>
+        <span data-admin-user-email></span>
+        <span class="badge" data-admin-role-badge></span>
+      </div>
+      <button type="button" class="admin-sidebar__signout" data-admin-signout data-i18n="admin_sign_out">Sign out</button>
+      <a href="../index.html" class="admin-sidebar__signout" style="display:block; text-align:center; margin-top:8px; text-decoration:none;" data-i18n="admin_back_to_site">← Back to the public site</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button type="button" class="admin-burger" data-admin-burger aria-label="Menu"><span></span></button>
+      <div>
+        <h1 data-i18n="admin_dash_title">Dashboard</h1>
+        <p data-i18n="admin_dash_lede">A quick overview of ICC's academic data.</p>
+      </div>
+      <div class="admin-topbar__actions">
+
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- Shown only when the viewer holds the `users` permission AND there
+           are requests waiting; see js/admin/dashboard.js. -->
+      <div class="admin-alert" data-pending-alert hidden>
+        <strong data-pending-text></strong>
+        <a class="btn btn--primary btn--xs" href="users.html" data-i18n="admin_dash_review">Review</a>
+      </div>
+
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <strong data-stat="majors">—</strong>
+          <span data-i18n="admin_stat_majors">Majors</span>
+        </div>
+        <div class="admin-stat-card">
+          <strong data-stat="specializations">—</strong>
+          <span data-i18n="admin_stat_specializations">Specializations</span>
+        </div>
+        <div class="admin-stat-card">
+          <strong data-stat="academicYears">—</strong>
+          <span data-i18n="admin_stat_academic_years">Academic years</span>
+        </div>
+        <div class="admin-stat-card">
+          <strong data-stat="semesters">—</strong>
+          <span data-i18n="admin_stat_semesters">Semesters</span>
+        </div>
+        <div class="admin-stat-card">
+          <strong data-stat="subjects">—</strong>
+          <span data-i18n="admin_stat_subjects">Subjects</span>
+        </div>
+        <div class="admin-stat-card">
+          <strong data-stat="requirements">—</strong>
+          <span data-i18n="admin_stat_requirements">Requirements</span>
+        </div>
+      </div>
+
+      <section class="admin-panel" data-dash-state-mount>
+        <div class="admin-panel__head">
+          <h2 data-i18n="admin_quick_actions">Quick actions</h2>
+        </div>
+        <div class="admin-panel__body">
+          <div class="admin-quick-actions">
+            <a class="btn btn--primary" href="majors.html?new=1" data-i18n="admin_quick_add_major">Add major</a>
+            <a class="btn btn--outline" href="specializations.html?new=1" data-i18n="admin_quick_add_specialization">Add specialization</a>
+            <a class="btn btn--outline" href="academic-years.html?new=1" data-i18n="admin_quick_add_academic_year">Add academic year</a>
+            <a class="btn btn--outline" href="semesters.html?new=1" data-i18n="admin_quick_add_semester">Add semester</a>
+            <a class="btn btn--outline" href="subjects.html?new=1" data-i18n="admin_quick_add_subject">Add subject</a>
+            <a class="btn btn--outline" href="requirements.html?new=1" data-i18n="admin_quick_add_requirement">Add requirement</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Governance + activity blocks load independently and stay hidden
+           unless the viewer holds the matching permission. -->
+      <section class="admin-panel" data-governance-panel hidden>
+        <div class="admin-panel__head">
+          <h2 data-i18n="admin_dash_governance">Accounts &amp; activity</h2>
+          <a class="btn btn--outline btn--xs" href="users.html" data-i18n="perm_users">Users</a>
+        </div>
+        <div class="admin-panel__body">
+          <div class="admin-stats admin-stats--compact">
+            <div class="admin-stat-card"><strong data-gov-stat="users">—</strong><span data-i18n="admin_stat_total_users">Total accounts</span></div>
+            <div class="admin-stat-card"><strong data-gov-stat="pending">—</strong><span data-i18n="admin_stat_pending">Pending approval</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel" data-activity-panel hidden>
+        <div class="admin-panel__head">
+          <h2 data-i18n="admin_dash_recent_activity">Recent activity</h2>
+          <a class="btn btn--outline btn--xs" href="audit.html" data-i18n="admin_dash_view_all">View all activity</a>
+        </div>
+        <div class="admin-panel__body" data-activity-mount></div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel__head">
+          <h2 data-i18n="admin_dash_your_access">Your access</h2>
+        </div>
+        <div class="admin-panel__body" data-access-summary></div>
+      </section>
+    </div>
+  </main>
+
+</div>
+
+<script src="../js/language.js" defer></script>
+<script src="../js/admin/admin-ui.js" defer></script>
+<script type="module" src="../js/admin/dashboard.js"></script>
+</body>
+</html>

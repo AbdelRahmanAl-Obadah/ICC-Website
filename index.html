@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ICC — Innovation & Computing Club | GJU</title>
 <meta name="description" content="ICC's academic resources platform for German Jordanian University computing students — majors, requirements, curriculum trees and subjects, all in one place.">
+<link rel="canonical" href="https://icc-admins.web.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ICC — Innovation & Computing Club | GJU">
+<meta property="og:description" content="ICC's academic resources platform for German Jordanian University computing students — majors, requirements, curriculum trees and subjects, all in one place.">
+<meta property="og:url" content="https://icc-admins.web.app/">
 <link rel="icon" type="image/png" href="assets/images/icc-logo-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +17,8 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/appearance.css">
+<link rel="stylesheet" href="css/auth.css">
 <link rel="stylesheet" href="css/animations.css">
 </head>
 <body data-page="home">
@@ -21,16 +28,17 @@
 <header class="nav">
   <div class="nav__inner">
     <a href="index.html" class="nav__brand">
-      <img src="assets/images/icc-logo-lockup.png" class="nav__logo" data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
+      <img src="assets/images/icc-logo-lockup.png" class="nav__logo" data-site-logo data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
     </a>
 
-    <nav class="nav__links" aria-label="Primary">
+    <nav class="nav__links" aria-label="Primary" data-cms-nav>
       <a class="nav__link" href="index.html" data-nav-key="home" data-i18n="nav_home">Home</a>
       <a class="nav__link" href="requirements.html" data-nav-key="requirements" data-i18n="nav_requirements">Academic Requirements</a>
       <a class="nav__link" href="majors.html" data-nav-key="majors" data-i18n="nav_majors">Majors</a>
       <a class="nav__link" href="search.html" data-nav-key="search" data-i18n="nav_search">Search</a>
       <a class="nav__link" href="gpa-calculator.html" data-nav-key="gpa" data-i18n="nav_gpa">GPA Calculator</a>
       <a class="nav__link" href="admins.html" data-nav-key="admins" data-i18n="nav_admins">ICC Admins</a>
+      <a class="nav__link nav__link--cta" href="signup.html" data-nav-key="signup" data-i18n="nav_signup">Sign Up</a>
     </nav>
 
     <div class="nav__actions">
@@ -51,6 +59,7 @@
     <a class="nav__mobile-link" href="search.html" data-i18n="nav_search">Search</a>
     <a class="nav__mobile-link" href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a>
     <a class="nav__mobile-link" href="admins.html" data-i18n="nav_admins">ICC Admins</a>
+    <a class="nav__mobile-link" href="signup.html" data-i18n="nav_signup">Sign Up</a>
     <div class="nav__mobile-foot">
       <div class="lang-switch" role="group" aria-label="Language">
         <button type="button" data-lang-btn="en">EN</button>
@@ -66,15 +75,15 @@
   <section class="hero">
     <div class="container hero__grid">
       <div>
-        <p class="hero__eyebrow" data-i18n="hero_eyebrow">German Jordanian University · Student Organization</p>
+        <p class="hero__eyebrow" data-cms-text="hero_eyebrow" data-site-content="home:eyebrow" data-i18n="hero_eyebrow">German Jordanian University · Student Organization</p>
         <h1>
-          <span data-i18n="hero_title_line1">Innovation & Computing Club</span>
+          <span data-cms-text="hero_title" data-site-content="hero:title" data-i18n="hero_title_line1">Innovation & Computing Club</span>
           <span data-i18n="hero_title_line2">Academic resources, organized like a real curriculum.</span>
         </h1>
-        <p class="hero__desc" data-i18n="hero_desc">ICC brings every requirement, major and subject GJU computing students need into one clear, searchable place — built by students, for students.</p>
+        <p class="hero__desc" data-cms-text="hero_desc" data-site-content="hero:subtitle" data-i18n="hero_desc">ICC brings every requirement, major and subject GJU computing students need into one clear, searchable place — built by students, for students.</p>
         <div class="hero__cta">
-          <a class="btn btn--primary" href="majors.html" data-i18n="hero_cta_majors">Browse majors</a>
-          <a class="btn btn--outline" href="requirements.html" data-i18n="hero_cta_requirements">View requirements</a>
+          <a class="btn btn--primary" href="majors.html" data-cms-text="hero_cta_majors" data-site-content="home:cta_primary" data-i18n="hero_cta_majors">Browse majors</a>
+          <a class="btn btn--outline" href="requirements.html" data-cms-text="hero_cta_requirements" data-site-content="home:cta_secondary" data-i18n="hero_cta_requirements">View requirements</a>
         </div>
       </div>
 
@@ -99,26 +108,26 @@
   <section class="section" data-reveal>
     <div class="container">
       <div class="section-head">
-        <h2 data-i18n="quick_title">Start here</h2>
+        <h2 data-cms-text="quick_title" data-i18n="quick_title">Start here</h2>
         <span class="section-index">01 / 05</span>
       </div>
 
       <div class="quick-grid">
         <a class="quick-card" href="requirements.html#electives">
           <span class="quick-card__index">A</span>
-          <h3 data-i18n="quick_electives">Free Electives</h3>
+          <h3 data-site-content="home:quick1" data-i18n="quick_electives">Free Electives</h3>
         </a>
         <a class="quick-card" href="requirements.html#university">
           <span class="quick-card__index">B</span>
-          <h3 data-i18n="quick_university">University Requirements</h3>
+          <h3 data-site-content="home:quick2" data-i18n="quick_university">University Requirements</h3>
         </a>
         <a class="quick-card" href="requirements.html#college">
           <span class="quick-card__index">C</span>
-          <h3 data-i18n="quick_college">College Requirements</h3>
+          <h3 data-site-content="home:quick3" data-i18n="quick_college">College Requirements</h3>
         </a>
         <a class="quick-card" href="majors.html">
           <span class="quick-card__index">D</span>
-          <h3 data-i18n="quick_majorsc">Majors</h3>
+          <h3 data-site-content="home:quick4" data-i18n="quick_majorsc">Majors</h3>
         </a>
       </div>
     </div>
@@ -129,8 +138,8 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <h2 data-i18n="featured_title">Featured majors</h2>
-          <p class="section-lede" data-i18n="featured_lede">A first look at how major pages will read once Firestore data is connected.</p>
+          <h2 data-cms-text="featured_title" data-site-content="sections:majors_title" data-i18n="featured_title">Featured majors</h2>
+          <p class="section-lede" data-i18n="featured_lede">A first look at the majors available on the platform.</p>
         </div>
         <span class="section-index">02 / 05</span>
       </div>
@@ -158,6 +167,23 @@
     </div>
   </section>
 
+
+  <!-- ======================== ACADEMIC TREE ======================== -->
+  <!-- Rendered from treeNodes by js/tree.js. The section removes itself
+       when the tree is empty, so the homepage is unchanged until an
+       administrator actually builds a structure. -->
+  <section class="section" data-academic-tree-section data-reveal>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="tree_section_title">Academic structure</h2>
+          <p class="section-lede" data-i18n="tree_section_lede">The current faculty, department and specialization structure.</p>
+        </div>
+      </div>
+      <div class="academic-tree" data-academic-tree></div>
+    </div>
+  </section>
+
   <!-- ============================= ABOUT ============================= -->
   <section class="section section--soft">
     <div class="container">
@@ -168,18 +194,24 @@
 
       <div class="about-grid">
         <div class="about-stats">
-          <div><strong>120+</strong><span data-i18n="about_stat_members">Active members</span></div>
-          <div><strong>3</strong><span data-i18n="about_stat_majors">Majors in progress</span></div>
-          <div><strong>2022</strong><span data-i18n="about_stat_founded">Founded</span></div>
-          <div><strong>01</strong><span data-i18n="about_stat_phase">Current phase</span></div>
+          <div><strong data-site-content="home:stat1">120+</strong><span data-i18n="about_stat_members">Active members</span></div>
+          <div><strong data-site-content="home:stat2">3</strong><span data-i18n="about_stat_majors">Majors in progress</span></div>
+          <div><strong data-site-content="home:stat3">2022</strong><span data-i18n="about_stat_founded">Founded</span></div>
+          <div><strong data-site-content="home:stat4">01</strong><span data-i18n="about_stat_phase">Current phase</span></div>
         </div>
         <div>
           <p class="section-lede" data-i18n="about_lede">Innovation & Computing Club is a student-run organization at the German Jordanian University, focused on making academic life easier through technology.</p>
-          <p data-i18n="about_body">We build the tools we wish existed as students — clear curriculum maps, organized requirements and a searchable home for everything computing students need to plan their degree. This platform is the club's flagship project, developed in phases and maintained by student contributors.</p>
+          <p data-cms-text="about_body" data-site-content="about:body" data-i18n="about_body">We build the tools we wish existed as students — clear curriculum maps, organized requirements and a searchable home for everything computing students need to plan their degree. This platform is the club's flagship project, developed in phases and maintained by student contributors.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- CMS-authored homepage sections.
+       Rendered by js/site-chrome.js from siteConfig/homepage. Empty and
+       hidden until an admin publishes sections, so the shipped homepage
+       above is never blanked by the CMS being empty or unreachable. -->
+  <div data-cms-sections hidden></div>
 
 </main>
 
@@ -188,18 +220,20 @@
   <div class="container">
     <div class="footer__grid">
       <div>
-        <img src="assets/images/icc-logo-lockup-dark.png" class="footer__logo" data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club">
-        <p class="footer__desc" data-i18n="footer_desc">A student-built academic resources platform for GJU's computing community.</p>
+        <img src="assets/images/icc-logo-lockup-dark.png" class="footer__logo" data-site-logo-dark data-i18n-attr="alt:nav_brand" alt="ICC — Innovation & Computing Club" loading="lazy" decoding="async">
+        <p class="footer__desc" data-cms-text="footer_desc" data-site-content="footer:text" data-i18n="footer_desc">A student-built academic resources platform for GJU's computing community.</p>
       </div>
       <div>
         <h4 data-i18n="footer_nav">Navigate</h4>
-        <ul class="footer__links">
+        <ul class="footer__links" data-cms-footer-nav>
           <li><a href="index.html" data-i18n="nav_home">Home</a></li>
           <li><a href="requirements.html" data-i18n="nav_requirements">Academic Requirements</a></li>
           <li><a href="majors.html" data-i18n="nav_majors">Majors</a></li>
           <li><a href="search.html" data-i18n="nav_search">Search</a></li>
           <li><a href="gpa-calculator.html" data-i18n="nav_gpa">GPA Calculator</a></li>
           <li><a href="admins.html" data-i18n="nav_admins">ICC Admins</a></li>
+          <li><a href="signup.html" data-i18n="nav_signup">Sign Up</a></li>
+          <li><a href="admin/login.html">Admin login</a></li>
         </ul>
       </div>
       <div>
@@ -211,15 +245,17 @@
       </div>
     </div>
     <div class="footer__bottom">
-      <span data-i18n="footer_copyright">© 2026 Innovation & Computing Club, German Jordanian University. Built by students.</span>
-      <span>ICC-Website · Phase 2 of 5</span>
+      <span data-cms-text="footer_copyright" data-i18n="footer_copyright">© 2026 Innovation & Computing Club, German Jordanian University. Built by students.</span>
     </div>
   </div>
 </footer>
 
-<script src="js/language.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/majors.js"></script>
-<script type="module" src="js/firebase-init.js"></script>
+<script src="js/language.js" defer></script>
+<script src="js/ui.js" defer></script>
+<script type="module" src="js/site-content.js"></script>
+<script type="module" src="js/site-chrome.js"></script>
+<script type="module" src="js/appearance.js"></script>
+<script type="module" src="js/tree.js"></script>
+<script type="module" src="js/majors.js"></script>
 </body>
 </html>

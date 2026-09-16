@@ -47,8 +47,14 @@ function initLightbox() {
   const closeBtn = lightbox.querySelector("[data-lightbox-close]");
   const sourceImg = frame.querySelector("img");
 
+  const unzoom = () => {
+    img.classList.remove("is-zoomed");
+    img.style.transformOrigin = "";
+  };
+
   const open = () => {
     if (sourceImg) img.src = sourceImg.src;
+    unzoom();
     lightbox.classList.add("is-open");
     document.body.classList.add("no-scroll");
     closeBtn.focus();
@@ -57,6 +63,7 @@ function initLightbox() {
   const close = () => {
     lightbox.classList.remove("is-open");
     document.body.classList.remove("no-scroll");
+    unzoom();
     frame.focus();
   };
 
@@ -73,6 +80,22 @@ function initLightbox() {
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && lightbox.classList.contains("is-open")) close();
+  });
+
+  // Zoom (double-click / double-tap toggles a larger view, keeping the
+  // tap point roughly centered). Plain vanilla JS, no library, and it
+  // never interferes with the click-outside-to-close behavior above since
+  // it's bound to the image itself, not the lightbox backdrop.
+  img.addEventListener("dblclick", (e) => {
+    if (!img.classList.contains("is-zoomed")) {
+      const rect = img.getBoundingClientRect();
+      const originX = ((e.clientX - rect.left) / rect.width) * 100;
+      const originY = ((e.clientY - rect.top) / rect.height) * 100;
+      img.style.transformOrigin = `${originX}% ${originY}%`;
+      img.classList.add("is-zoomed");
+    } else {
+      unzoom();
+    }
   });
 }
 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appearance — ICC Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../assets/images/icc-logo-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/responsive.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body" data-page="admin-appearance">
+
+<!-- Auth gate: shown until admin-guard.js confirms an authorized admin.
+     The shell below stays visibility:hidden until then, and Firestore
+     rules reject unauthorized reads regardless. -->
+<div class="admin-gate" data-admin-gate>
+  <div class="admin-gate__spinner" aria-hidden="true"></div>
+  <p data-i18n="admin_checking_access">Checking your access…</p>
+</div>
+
+<div class="admin-shell" data-admin-shell style="visibility:hidden;">
+
+  <aside class="admin-sidebar" data-admin-sidebar>
+    <a href="index.html" class="admin-sidebar__brand">
+      <img src="../assets/images/icc-logo-icon.png" alt="ICC">
+      <span data-i18n="admin_panel_label">Admin Panel</span>
+    </a>
+
+    <nav class="admin-nav" data-admin-nav aria-label="Admin">
+      <!-- Rendered by js/admin/admin-nav.js from the signed-in user's
+           permissions. A Super Admin sees every section; an Admin sees
+           only what they are authorized to manage. -->
+    </nav>
+
+    <div class="admin-sidebar__foot">
+      <div class="lang-switch" role="group" aria-label="Language" style="margin-bottom:12px;">
+        <button type="button" data-lang-btn="en">EN</button>
+        <button type="button" data-lang-btn="ar">AR</button>
+      </div>
+      <div class="admin-sidebar__user">
+        <strong data-admin-user-name>—</strong>
+        <span data-admin-user-email></span>
+        <span class="badge" data-admin-role-badge></span>
+      </div>
+      <button type="button" class="admin-sidebar__signout" data-admin-signout data-i18n="admin_sign_out">Sign out</button>
+      <a href="../index.html" class="admin-sidebar__signout" style="display:block; text-align:center; margin-top:8px; text-decoration:none;" data-i18n="admin_back_to_site">← Back to the public site</a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button type="button" class="admin-burger" data-admin-burger aria-label="Menu"><span></span></button>
+      <div>
+        <h1 data-i18n="admin_appearance_title">Appearance</h1>
+        <p data-i18n="admin_appearance_lede">Global colours, shape, components, typography and branding.</p>
+      </div>
+      <div class="admin-topbar__actions">
+        <button type="button" class="btn btn--ghost btn--sm" data-cms-history data-i18n="cms_history">History</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-cms-archive data-i18n="cms_archive">Unpublish</button>
+        <button type="button" class="btn btn--outline" data-cms-save data-i18n="cms_save_draft">Save draft</button>
+        <button type="button" class="btn btn--primary" data-cms-publish data-i18n="cms_publish">Publish</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div data-cms-status></div>
+      <p class="admin-alert admin-alert--info" data-cms-permission-note hidden></p>
+      <div class="appr-layout">
+        <form class="admin-panel appr-controls" data-appearance-form novalidate>
+          <div class="admin-panel__body">
+            <div data-appearance-fields></div>
+            <div class="admin-form__actions">
+              <button type="button" class="btn btn--ghost btn--sm" data-reset-btn data-i18n="appr_reset">Reset to ICC defaults</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Live preview. Styled by the SAME applyAppearance() the public
+             site uses (js/appearance-engine.js), scoped to this container
+             so the Admin Panel keeps its own look while you experiment. -->
+        <aside class="admin-panel appr-preview-panel">
+          <div class="admin-panel__body">
+            <h2 data-i18n="appr_preview_title">Live preview</h2>
+            <p class="hint" data-i18n="appr_preview_lede">An approximation of how the public site will look. Nothing is saved until you press Save or Publish.</p>
+
+            <div class="appr-preview" data-appearance-preview>
+              <div class="appr-preview__nav">
+                <span class="appr-preview__brand">ICC</span>
+                <span class="appr-preview__links">
+                  <span>Home</span><span>Majors</span><span>Search</span>
+                </span>
+              </div>
+              <div class="appr-preview__hero">
+                <p class="appr-preview__eyebrow">German Jordanian University</p>
+                <h3>Innovation &amp; Computing Club</h3>
+                <p class="appr-preview__desc">Academic resources, organized like a real curriculum.</p>
+                <span class="appr-preview__actions">
+                  <span class="btn btn--primary">Browse majors</span>
+                  <span class="btn btn--outline">Requirements</span>
+                </span>
+              </div>
+              <div class="appr-preview__cards">
+                <div class="card"><strong>Free Electives</strong><p>Courses outside your major.</p></div>
+                <div class="card"><strong>Majors</strong><p>Full curriculum trees.</p></div>
+              </div>
+              <div class="appr-preview__footer">© Innovation &amp; Computing Club</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="../js/language.js" defer></script>
+<script src="../js/admin/admin-ui.js" defer></script>
+<script type="module" src="../js/admin/appearance-admin.js"></script>
+</body>
+</html>

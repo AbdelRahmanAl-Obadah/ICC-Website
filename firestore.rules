@@ -1,56 +1,632 @@
 rules_version = '2';
 
 /**
- * PHASE 1 — baseline Firestore security rules.
+ * PHASE 6 — Firestore security rules.
  *
- * This project does not read or write Firestore yet (js/firestore.js and
- * js/auth.js are placeholders). These rules exist so the project is never
- * left with an open database once a real Firebase project is connected.
+ * This file is the authorization boundary for the entire platform. The site
+ * is static: there is no server, no API layer and no place to hold a
+ * service-account key, so everything the browser does is untrusted input.
+ * The Admin Panel hides controls the viewer can't use and blocks pages they
+ * can't open, but those are conveniences. What follows is the enforcement.
  *
- * Default posture:
- *   - Public academic content (majors, semesters, subjects, requirements)
- *     is READ-ONLY for anyone, once those collections exist.
- *   - ALL writes are denied until PHASE 3 introduces authenticated admin
- *     checks (see js/auth.js). Do not relax this before that lands.
+ * ==========================================================================
+ * WHAT IS ENFORCED HERE
+ * ==========================================================================
+ * 1. PERMISSION MATRIX — per section, per action:
+ *      permissions: { subjects: { view, create, edit, delete, publish } }
+ *    Holding "edit" does not imply "delete"; holding "create" does not imply
+ *    "publish". Each write is checked against the specific action it performs.
+ *    Legacy Phase 5 shape `{ subjects: true }` still means all actions.
  *
- * PHASE 2/3 TODO:
- *   - Replace `allow write: if false;` with an isAdmin() check backed by
- *     either custom auth claims or an `admins/{uid}` allowlist document.
- *   - Add rules for the `admins` collection itself (never client-writable).
- *   - Add field-level validation once the final schema is confirmed.
+ * 2. ADMIN OWNERSHIP — when ownership.enabled is true, an admin may only
+ *    touch records belonging to a major in ownership.majors. Enforced on
+ *    BOTH the existing document and the incoming one, so a record cannot be
+ *    moved out of (or into) someone else's scope.
+ *
+ * 3. WORKFLOW / DRAFT-PUBLISH — content carries a `status` and the invariant
+ *    active == (status == "published"). Making something public requires the
+ *    `publish` action; an admin without it can create and edit freely but
+ *    their work stays a draft until a reviewer publishes it.
+ *
+ * 4. AUDIT + VERSIONS — append-only histories. Nobody, including the Super
+ *    Admin, may rewrite either in place.
+ *
+ * ==========================================================================
+ * COLLECTIONS
+ * ==========================================================================
+ *   majors, specializations, academicYears, semesters, subjects,
+ *   requirements, prerequisites, treeNodes
+ *                            academic content, workflow-managed
+ *                            (specializations and academicYears are
+ *                            optional levels — absent ids mean "applies to
+ *                            the whole parent", never "invalid")
+ *   siteContent, settings    site copy and configuration
+ *   users/{uid}              role, status, permissions{}, ownership{}
+ *   auditLogs/{id}           append-only activity log
+ *   versions/{id}            append-only content snapshots for rollback
+ *   backups/{id}             backup manifests (Super Admin only)
+ *   admins/{uid}             LEGACY Phase-3B allowlist, read-only bridge
  */
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public academic data — readable by everyone, writable by no one yet.
+    /* ================================================================
+       IDENTITY
+       Firestore caches repeated document access calls within one request
+       evaluation, so calling profile() several times costs one read.
+       ================================================================ */
+
+    function isSignedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+
+    function hasProfile() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(uid()));
+    }
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(uid())).data;
+    }
+
+    /** Legacy allowlist, honoured only while no users/{uid} profile exists. */
+    function isLegacyAdmin() {
+      return isSignedIn() &&
+        !exists(/databases/$(database)/documents/users/$(uid())) &&
+        exists(/databases/$(database)/documents/admins/$(uid())) &&
+        get(/databases/$(database)/documents/admins/$(uid())).data.role == "admin" &&
+        get(/databases/$(database)/documents/admins/$(uid())).data.active == true;
+    }
+
+    function isSuperAdmin() {
+      return hasProfile() && profile().role == "superadmin" && profile().status == "active";
+    }
+    function isPlainAdmin() {
+      return hasProfile() && profile().role == "admin" && profile().status == "active";
+    }
+    function isActiveAdmin() {
+      return isSuperAdmin() || isPlainAdmin() || isLegacyAdmin();
+    }
+
+    /* ================================================================
+       PERMISSION MATRIX
+       ================================================================ */
+
+    function perms() { return profile().permissions; }
+
+    /** Does this admin hold the section at all? Implies the view action. */
+    function holdsSection(section) {
+      return isPlainAdmin() && section in perms();
+    }
+
+    /**
+     * May the caller perform `action` on `section`?
+     *
+     * The `== true` test runs first and short-circuits, which is what makes
+     * the legacy boolean shape safe: when permissions[section] is `true`,
+     * the map lookup that follows is never evaluated.
+     */
+    function can(section, action) {
+      return isSuperAdmin()
+        || isLegacyAdmin()
+        || (holdsSection(section) &&
+            (perms()[section] == true || perms()[section].get(action, false) == true));
+    }
+
+    /** Reading a section's records requires only that they hold it. */
+    function canView(section) {
+      return isSuperAdmin() || isLegacyAdmin() || holdsSection(section);
+    }
+
+    /* ================================================================
+       OWNERSHIP
+       Narrows permissions; never grants. Super Admins and legacy admins
+       are unrestricted, and an admin with ownership disabled passes.
+       ================================================================ */
+
+    function ownership() { return profile().get("ownership", {}); }
+
+    function ownershipOn() {
+      return isPlainAdmin() && ownership().get("enabled", false) == true;
+    }
+
+    function ownedMajors() { return ownership().get("majors", []); }
+
+    /** Owns this major id? Unrestricted admins always do. */
+    function ownsMajor(majorId) {
+      return !ownershipOn() || (majorId != null && ownedMajors().hasAny([majorId]));
+    }
+
+    /** Owns the existing document (by its majorId field)? */
+    function ownsExisting() {
+      return !ownershipOn() || ownsMajor(resource.data.get("majorId", null));
+    }
+
+    /**
+     * Owns the incoming document too. Checked separately so a restricted
+     * admin cannot move a record INTO or OUT OF someone else's scope by
+     * rewriting its majorId.
+     */
+    function ownsIncoming() {
+      return !ownershipOn() || ownsMajor(request.resource.data.get("majorId", null));
+    }
+
+    function ownsBoth() { return ownsExisting() && ownsIncoming(); }
+
+    /* ================================================================
+       WORKFLOW
+       The invariant: a record is publicly visible (active == true) if and
+       only if its status is "published". Reaching either of those states
+       requires the `publish` action on the section.
+       ================================================================ */
+
+    function incomingIsPublic() {
+      return request.resource.data.get("active", false) == true
+          || request.resource.data.get("status", "draft") == "published";
+    }
+
+    function existingIsPublic() {
+      return resource.data.get("active", false) == true
+          || resource.data.get("status", "draft") == "published";
+    }
+
+    /** True when this write changes whether the public can see the record. */
+    function changesVisibility() {
+      return incomingIsPublic() != existingIsPublic();
+    }
+
+    /**
+     * A create may only land in a public state if the author may publish.
+     * Otherwise it must arrive as a draft — which is exactly the
+     * "create without publishing" case the approval workflow is built on.
+     */
+    function createRespectsWorkflow(section) {
+      return !incomingIsPublic() || can(section, "publish");
+    }
+
+    /**
+     * An update may change visibility only with the publish action, and may
+     * never edit an already-public record without it either — otherwise
+     * "edit" would be a silent route to changing live content.
+     */
+    function updateRespectsWorkflow(section) {
+      return (!changesVisibility() && !incomingIsPublic()) || can(section, "publish");
+    }
+
+    /* ================================================================
+       SHARED SHAPE HELPERS
+       ================================================================ */
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+    function isValidRole(role) {
+      return role == "user" || role == "admin" || role == "superadmin";
+    }
+    function isValidStatus(status) {
+      return status == "pending" || status == "active" ||
+             status == "disabled" || status == "rejected";
+    }
+    function isValidWorkflow(state) {
+      return state == "draft" || state == "pending" || state == "approved" ||
+             state == "published" || state == "rejected" || state == "unpublished";
+    }
+
+    /**
+     * Which permission section governs a CMS document.
+     *
+     * Mirrors CMS_DOC_SECTION in js/cms-schema.js. An unknown id maps to
+     * "__none__", which no admin can ever hold — so a document created
+     * with a typo'd or invented id is writable by nobody rather than
+     * falling through to whatever section happens to be checked last.
+     */
+    function sectionFor(docId) {
+      return docId == "appearance" ? "appearance"
+           : docId == "homepage"   ? "homepage"
+           : docId == "content"    ? "content"
+           : docId == "navigation" ? "navigation"
+           : docId == "settings"   ? "settings"
+           : "__none__";
+    }
+
+    /* ================================================================
+       ACADEMIC CONTENT
+       One shared shape, applied per collection so each gets its own
+       section key. Public reads see published records only — which the
+       active==published invariant makes equivalent to the existing
+       `active == true` filter every public query already uses, so no
+       public page needed changing.
+       ================================================================ */
+
+    // --- Majors ------------------------------------------------------
+    // Ownership for majors keys off the document ID rather than a
+    // majorId field, since a major owns itself.
     match /majors/{majorId} {
+      allow read: if resource.data.active == true
+        || (canView("majors") && ownsMajor(majorId));
+
+      allow create: if can("majors", "create")
+        && ownsMajor(majorId)
+        && createRespectsWorkflow("majors")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("majors", "edit")
+        && ownsMajor(majorId)
+        && updateRespectsWorkflow("majors")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      // The Curriculum screen edits ONE field on a major and nothing else.
+      // Granting it the full `majors:edit` right would mean anyone trusted
+      // to maintain curriculum images could also rename or unpublish the
+      // major, so it gets its own section with a write narrowed by
+      // hasOnly() to exactly the fields it needs.
+      allow update: if can("curriculum", "edit")
+        && ownsMajor(majorId)
+        && changedKeys().hasOnly(["curriculumImageUrl", "updatedAt"]);
+
+      allow delete: if can("majors", "delete") && ownsMajor(majorId);
+    }
+
+    // --- Specializations ---------------------------------------------
+    // An optional level between a major and its years. Ownership keys off
+    // the majorId field, exactly as semesters and courses do, so a
+    // restricted admin's scope extends down the branch automatically.
+    match /specializations/{specializationId} {
+      allow read: if resource.data.active == true
+        || (canView("specializations") && ownsExisting());
+
+      allow create: if can("specializations", "create")
+        && ownsIncoming()
+        && createRespectsWorkflow("specializations")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("specializations", "edit")
+        && ownsBoth()
+        && updateRespectsWorkflow("specializations")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      // Same narrow curriculum-image write as majors above.
+      allow update: if can("curriculum", "edit")
+        && ownsBoth()
+        && changedKeys().hasOnly(["curriculumImageUrl", "updatedAt"]);
+
+      allow delete: if can("specializations", "delete") && ownsExisting();
+    }
+
+    // --- Academic years ----------------------------------------------
+    // A year with no majorId is SHARED across every major.
+    //
+    // Reading one is allowed to any admin who holds the section, scoped or
+    // not: a shared year belongs to every major, so a restricted admin
+    // needs to see it to build their own major's semesters. Writing one is
+    // NOT — ownsBoth() still refuses, because a record that affects every
+    // major is not something an admin confined to one major should be able
+    // to change. Read broadly, write narrowly.
+    match /academicYears/{yearId} {
+      allow read: if resource.data.active == true
+        || (canView("academicYears") &&
+            (ownsExisting() || resource.data.get("majorId", "") == ""));
+
+      allow create: if can("academicYears", "create")
+        && ownsIncoming()
+        && createRespectsWorkflow("academicYears")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("academicYears", "edit")
+        && ownsBoth()
+        && updateRespectsWorkflow("academicYears")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("academicYears", "delete") && ownsExisting();
+    }
+
+    // --- Semesters ---------------------------------------------------
+    match /semesters/{semesterId} {
+      allow read: if resource.data.active == true
+        || (canView("semesters") && ownsExisting());
+
+      allow create: if can("semesters", "create")
+        && ownsIncoming()
+        && createRespectsWorkflow("semesters")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("semesters", "edit")
+        && ownsBoth()
+        && updateRespectsWorkflow("semesters")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("semesters", "delete") && ownsExisting();
+    }
+
+    // --- Subjects ----------------------------------------------------
+    match /subjects/{subjectId} {
+      allow read: if resource.data.active == true
+        || (canView("subjects") && ownsExisting());
+
+      allow create: if can("subjects", "create")
+        && ownsIncoming()
+        && createRespectsWorkflow("subjects")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("subjects", "edit")
+        && ownsBoth()
+        && updateRespectsWorkflow("subjects")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("subjects", "delete") && ownsExisting();
+    }
+
+    // --- Requirements ------------------------------------------------
+    // University-wide, so no ownership scope applies.
+    match /requirements/{requirementId} {
+      allow read: if resource.data.active == true || canView("requirements");
+
+      allow create: if can("requirements", "create")
+        && createRespectsWorkflow("requirements")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("requirements", "edit")
+        && updateRespectsWorkflow("requirements")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("requirements", "delete");
+    }
+
+    // --- Prerequisites -----------------------------------------------
+    // The document links two subjects and carries a denormalized majorId
+    // (written by the Admin Panel) precisely so ownership can be checked
+    // here without a second document read per evaluation.
+    match /prerequisites/{prereqId} {
+      allow read: if resource.data.active == true
+        || (canView("prerequisites") && ownsExisting());
+
+      allow create: if can("prerequisites", "create")
+        && ownsIncoming()
+        && createRespectsWorkflow("prerequisites")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("prerequisites", "edit")
+        && ownsBoth()
+        && updateRespectsWorkflow("prerequisites")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("prerequisites", "delete") && ownsExisting();
+    }
+
+    // --- Academic tree -------------------------------------------------
+    match /treeNodes/{nodeId} {
+      allow read: if resource.data.active == true || canView("tree");
+
+      allow create: if can("tree", "create")
+        && createRespectsWorkflow("tree")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow update: if can("tree", "edit")
+        && updateRespectsWorkflow("tree")
+        && isValidWorkflow(request.resource.data.get("status", "draft"));
+
+      allow delete: if can("tree", "delete");
+    }
+
+    /* ================================================================
+       SITE CONFIG — the CMS (Phase 7, Part 2)
+       ----------------------------------------------------------------
+       siteConfig/{docId} where docId is one of:
+         appearance | homepage | content | navigation | settings
+
+       Each document holds BOTH a draft and a published copy:
+
+         { draft: {...}, published: {...}, archived: [...], status, ... }
+
+       THE SPLIT THAT MATTERS
+       `edit` may write the draft and nothing else. `publish` is required
+       to touch `published` — which is the only field the public site ever
+       reads. That is what makes "an author can prepare changes but cannot
+       put them live" a real guarantee rather than a UI convention: the
+       panel disables the Publish button, and this refuses the write even
+       if the panel is bypassed entirely.
+
+       hasOnly() is doing the load-bearing work. Without it an admin with
+       only `edit` could include a `published` key in the same write that
+       updates their draft, and the change would go live.
+       ================================================================ */
+
+    match /siteConfig/{docId} {
+
+      // World-readable: the public site reads the published half on every
+      // page load, and there is no signed-in visitor to authorize. Drafts
+      // live in the same document and are therefore readable too, which is
+      // an accepted and deliberate trade: this is website copy and colours
+      // — an unpublished headline is not a secret, and the alternative
+      // (a second collection) would cost the public site a second read on
+      // every page to protect nothing of value. Nothing sensitive may be
+      // stored here, which is why users, audit logs and academic records
+      // are all separate collections with their own rules.
       allow read: if true;
-      allow write: if false;
 
-      match /semesters/{semesterId} {
-        allow read: if true;
-        allow write: if false;
+      // Draft-only write, UPDATE. The absence of "published" and
+      // "archived" from this list is the entire point.
+      //
+      // Note this is `update` only: on a create there is no `resource`, so
+      // resource.data would be null and diff() would error out — which in
+      // rules means the condition fails, silently blocking the first save
+      // of every CMS document. The create case is handled separately below
+      // against the incoming keys instead.
+      allow update: if can(sectionFor(docId), "edit")
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(["draft", "status", "updatedAt", "updatedBy", "updatedByName"])
+        && request.resource.data.get("status", "draft") != "published";
 
-        match /subjects/{subjectId} {
-          allow read: if true;
-          allow write: if false;
-        }
-      }
+      // Draft-only write, CREATE. Same restriction expressed against the
+      // whole incoming document, since there is nothing to diff against.
+      allow create: if can(sectionFor(docId), "edit")
+        && request.resource.data.keys()
+             .hasOnly(["draft", "status", "updatedAt", "updatedBy", "updatedByName"])
+        && request.resource.data.get("status", "draft") != "published";
+
+      // Publishing, unpublishing and archiving — the writes that change
+      // what visitors see.
+      allow create, update: if can(sectionFor(docId), "publish");
+
+      // CMS documents are never deleted. Removing one would silently drop
+      // the site back to its built-in defaults with no record of why;
+      // "unpublish" (which clears `published` but keeps the draft and the
+      // archive) is the operation that was actually wanted, and it goes
+      // through the publish branch above.
+      allow delete: if false;
     }
 
-    match /requirements/{trackId} {
+    /* ================================================================
+       WEBSITE CONTENT / SETTINGS
+       Legacy Phase-5 documents, still honoured as a fallback beneath the
+       CMS above so text entered before Phase 7 is not lost.
+       ================================================================ */
+
+    match /siteContent/{contentId} {
       allow read: if true;
+      allow write: if (contentId == "home"
+                        && can("homepage", "edit") && can("homepage", "publish"))
+        || (contentId != "home"
+                        && can("content", "edit") && can("content", "publish"));
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if (settingId == "appearance"
+                        && can("appearance", "edit") && can("appearance", "publish"))
+        || (settingId != "appearance" && can("settings", "edit"));
+    }
+
+    /* ================================================================
+       USERS — accounts, roles, the matrix and ownership
+       ================================================================ */
+
+    match /users/{userId} {
+
+      allow get: if (isSignedIn() && uid() == userId) || canView("users");
+      allow list: if canView("users");
+
+      // Self-service registration: pinned to a powerless shape. A tampered
+      // request asking for role "superadmin", an active status, or a
+      // non-empty permissions map fails here, on the server.
+      allow create: if isSignedIn()
+        && uid() == userId
+        && request.resource.data.role == "user"
+        && request.resource.data.status == "pending"
+        && request.resource.data.permissions.keys().size() == 0
+        && request.resource.data.email is string;
+
+      // Super Admin creates an administrator profile.
+      allow create: if isSuperAdmin()
+        && isValidRole(request.resource.data.role)
+        && isValidStatus(request.resource.data.status);
+
+      // (a) Super Admin: full control over role, status, matrix, ownership.
+      //     Guard rail: cannot change their OWN role, which is what stops
+      //     the last Super Admin from locking the platform out of its only
+      //     account-management path.
+      allow update: if isSuperAdmin()
+        && isValidRole(request.resource.data.role)
+        && isValidStatus(request.resource.data.status)
+        && (userId != uid() || request.resource.data.role == resource.data.role);
+
+      // (b) An Admin holding users:edit may work the approval queue for
+      //     NORMAL users only, and may not touch role, permissions or
+      //     ownership on any account — so they cannot promote themselves,
+      //     promote a friend, or widen their own scope.
+      allow update: if can("users", "edit")
+        && !isSuperAdmin()
+        && resource.data.role == "user"
+        && request.resource.data.role == "user"
+        && request.resource.data.permissions.keys().size() == 0
+        && isValidStatus(request.resource.data.status)
+        && changedKeys().hasOnly([
+             "status", "updatedAt", "approvedAt", "approvedBy",
+             "disabledAt", "disabledBy", "notes"
+           ]);
+
+      // (c) Anyone may edit their own display name and login stamp, and
+      //     nothing that could affect their own authorization.
+      allow update: if isSignedIn()
+        && uid() == userId
+        && changedKeys().hasOnly(["displayName", "lastLoginAt", "updatedAt"]);
+
+      allow delete: if isSuperAdmin();
+    }
+
+    /* ================================================================
+       AUDIT LOGS — append-only
+       ================================================================ */
+
+    match /auditLogs/{logId} {
+      allow read: if can("audit", "view");
+
+      // Any active admin may append, but only as themselves: actorUid must
+      // match the caller's own token, so an admin cannot fabricate an entry
+      // blaming someone else for their change.
+      //
+      // PHASE 8: the writer now emits both `section` (historical) and
+      // `resource` (the name the brief specifies), holding the same value.
+      // Either satisfies the shape check, so a record written by an older
+      // build and one written by the current build are both accepted.
+      allow create: if isActiveAdmin()
+        && request.resource.data.actorUid == uid()
+        && request.resource.data.action is string
+        && (request.resource.data.get("section", null) is string
+            || request.resource.data.get("resource", null) is string);
+
+      // Nobody rewrites history — not admins, not the Super Admin. An audit
+      // trail that can be edited in place is not an audit trail.
+      allow update: if false;
+
+      allow delete: if can("audit", "delete");
+    }
+
+    /* ================================================================
+       VERSION HISTORY — append-only snapshots
+       A version is written immediately BEFORE the change it precedes, by
+       the admin making that change. Restoring writes the snapshot back to
+       the live collection (checked by that collection's own rules) and
+       records a fresh audit entry; it never mutates the snapshot itself.
+       ================================================================ */
+
+    match /versions/{versionId} {
+      allow read: if can("versions", "view");
+
+      allow create: if isActiveAdmin()
+        && request.resource.data.actorUid == uid()
+        && request.resource.data.collectionName is string
+        && request.resource.data.docId is string;
+
+      allow update: if false;
+      // Pruning old snapshots is a Super Admin housekeeping task.
+      allow delete: if isSuperAdmin();
+    }
+
+    /* ================================================================
+       BACKUPS — manifests of Super-Admin exports. The archive itself is
+       downloaded to the operator's machine, never stored here.
+       ================================================================ */
+
+    match /backups/{backupId} {
+      allow read: if can("backup", "view");
+      allow create: if can("backup", "create") && request.resource.data.actorUid == uid();
+      allow update: if false;
+      allow delete: if isSuperAdmin();
+    }
+
+    /* ================================================================
+       LEGACY ADMIN ALLOWLIST (Phase 3B) — read-only, never writable
+       ================================================================ */
+
+    match /admins/{adminId} {
+      allow get: if (isSignedIn() && uid() == adminId) || isSuperAdmin();
+      allow list: if isSuperAdmin();
       allow write: if false;
     }
 
-    // Reserved for Phase 3 admin allowlist — never client-writable.
-    match /admins/{uid} {
-      allow read: if false;
-      allow write: if false;
-    }
+    /* ================================================================
+       DEFAULT DENY
+       ================================================================ */
 
-    // Deny everything else by default.
     match /{document=**} {
       allow read: if false;
       allow write: if false;

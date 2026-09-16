@@ -1,0 +1,372 @@
+/* ==========================================================================
+   ICC — APPEARANCE PRESETS
+   --------------------------------------------------------------------------
+   PHASE 7 (Part 2). The other half of the appearance system: js/appearance.js
+   sets a data-* attribute on <html>, and the blocks below decide what that
+   attribute means.
+
+   THIS IS THE SAFETY BOUNDARY.
+   The CMS stores a token like "pill" or "glass" — never a CSS rule. Every
+   rule that can ever apply to the public site is written here, in a file
+   that goes through review like any other code. An admin chooses among
+   these looks; they cannot author a new one, which is what makes an
+   appearance system safe to hand to a non-developer.
+
+   Load order matters: this file comes AFTER style.css and components.css
+   so its overrides win, and it only ever overrides — the default look is
+   whatever those files already say, so a site with no CMS configuration
+   renders exactly as it shipped.
+
+   Everything uses logical properties (inline-start, not left) so the
+   Arabic RTL layout needs no parallel rules.
+   ========================================================================== */
+
+:root {
+  /* Tokens introduced by the appearance system. Defaults here match the
+     ICC identity, so this file changes nothing until the CMS says so. */
+  --icc-accent: #2b7fd1;
+  --icc-border-color: #dce0e2;
+  --icc-border-width: 1px;
+  --icc-on-primary: #ffffff;
+  --icc-on-accent: #ffffff;
+  --section-spacing: 72px;
+}
+
+/* ==========================================================================
+   COLOR MODE
+   ==========================================================================
+   Dark mode re-points the surface and text tokens rather than restyling
+   components, so every component that already reads those tokens follows
+   automatically — the same reason the colour system works at all.
+
+   "auto" defers to the OS preference through a media query, so a visitor
+   who switches their system theme mid-session sees the site follow without
+   a reload.
+   ========================================================================== */
+
+html[data-color-mode="dark"] {
+  --icc-white: #14171a;
+  --icc-gray-soft: #1c2126;
+  --icc-gray: #2a3138;
+  --icc-ink: #eef1f3;
+  --icc-ink-soft: #a7b0b8;
+  --icc-border-color: #2a3138;
+  --icc-blue-tint: #16283a;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-mode="auto"] {
+    --icc-white: #14171a;
+    --icc-gray-soft: #1c2126;
+    --icc-gray: #2a3138;
+    --icc-ink: #eef1f3;
+    --icc-ink-soft: #a7b0b8;
+    --icc-border-color: #2a3138;
+    --icc-blue-tint: #16283a;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Images and the logo lockup need a small lift in dark mode, since the
+   brand assets were drawn for a white page. */
+html[data-color-mode="dark"] .footer__logo,
+html[data-color-mode="dark"] .nav__logo {
+  filter: brightness(1.15);
+}
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ==========================================================================
+   'Academy' is the club's real brand typeface and stays first in every
+   stack that claims to be ICC's — dropping the licensed file in later
+   costs zero CSS changes. Orbitron remains the freely-licensed stand-in.
+   ========================================================================== */
+
+html[data-font-pairing="academy"] {
+  --font-display: 'Academy', 'Orbitron', 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', -apple-system, sans-serif;
+}
+html[data-font-pairing="plex"] {
+  --font-display: 'IBM Plex Sans', 'Segoe UI', -apple-system, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', -apple-system, sans-serif;
+}
+html[data-font-pairing="system"] {
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+html[data-font-pairing="serif"] {
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: Georgia, 'Times New Roman', serif;
+}
+
+/* Arabic always uses the Arabic stack regardless of pairing — the display
+   faces above have no Arabic coverage, and letting one be selected for
+   Arabic text produces fallback glyphs, not a style choice. */
+html[dir="rtl"] body,
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4 {
+  font-family: var(--font-arabic);
+}
+
+/* ==========================================================================
+   DENSITY
+   ========================================================================== */
+
+html[data-density="compact"] { --section-spacing: 48px; --gutter: 18px; }
+html[data-density="regular"] { --gutter: 24px; }
+html[data-density="relaxed"] { --section-spacing: 104px; --gutter: 32px; }
+
+section,
+.section { padding-block: var(--section-spacing); }
+
+/* ==========================================================================
+   BUTTONS
+   ==========================================================================
+   --icc-on-primary is computed from the primary colour's luminance in
+   js/appearance.js, so a pale brand colour gets dark text instead of
+   unreadable white-on-yellow.
+   ========================================================================== */
+
+html[data-button-style="solid"] .btn--primary {
+  background: var(--icc-blue);
+  color: var(--icc-on-primary);
+  border: var(--border-width, 1px) solid var(--icc-blue);
+}
+html[data-button-style="solid"] .btn--primary:hover { background: var(--icc-blue-dim); }
+
+html[data-button-style="soft"] .btn--primary {
+  background: var(--icc-blue-tint);
+  color: var(--icc-blue);
+  border: var(--border-width, 1px) solid transparent;
+}
+html[data-button-style="soft"] .btn--primary:hover {
+  background: var(--icc-blue);
+  color: var(--icc-on-primary);
+}
+
+html[data-button-style="outline"] .btn--primary {
+  background: transparent;
+  color: var(--icc-blue);
+  border: var(--border-width, 1px) solid var(--icc-blue);
+}
+html[data-button-style="outline"] .btn--primary:hover {
+  background: var(--icc-blue);
+  color: var(--icc-on-primary);
+}
+
+html[data-button-style="pill"] .btn,
+html[data-button-style="pill"] .btn--primary,
+html[data-button-style="pill"] .btn--outline {
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+
+html[data-card-style="flat"] .card,
+html[data-card-style="flat"] .major-card,
+html[data-card-style="flat"] .quick-card {
+  border: none;
+  box-shadow: none;
+  background: var(--icc-gray-soft);
+}
+
+html[data-card-style="bordered"] .card,
+html[data-card-style="bordered"] .major-card,
+html[data-card-style="bordered"] .quick-card {
+  border: var(--border-width, 1px) solid var(--icc-border-color);
+  box-shadow: none;
+}
+
+html[data-card-style="raised"] .card,
+html[data-card-style="raised"] .major-card,
+html[data-card-style="raised"] .quick-card {
+  border: none;
+  box-shadow: var(--shadow-card);
+}
+
+/* "glass" needs a background behind it to be worth anything, and
+   backdrop-filter is expensive — so it is scoped to the cards that sit on
+   coloured or image backgrounds, not applied site-wide. */
+html[data-card-style="glass"] .card,
+html[data-card-style="glass"] .major-card,
+html[data-card-style="glass"] .quick-card {
+  background: color-mix(in srgb, var(--icc-white) 72%, transparent);
+  backdrop-filter: blur(10px);
+  border: var(--border-width, 1px) solid color-mix(in srgb, var(--icc-border-color) 60%, transparent);
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  html[data-card-style="glass"] .card,
+  html[data-card-style="glass"] .major-card,
+  html[data-card-style="glass"] .quick-card {
+    background: var(--icc-white);
+  }
+}
+
+/* ==========================================================================
+   HEADER / NAVBAR
+   ========================================================================== */
+
+html[data-header-style="solid"] .nav {
+  background: var(--icc-white);
+  border-bottom: var(--border-width, 1px) solid var(--icc-border-color);
+}
+html[data-header-style="transparent"] .nav {
+  background: transparent;
+  border-bottom: none;
+}
+html[data-header-style="bordered"] .nav {
+  background: var(--icc-white);
+  border-bottom: 2px solid var(--icc-blue);
+}
+html[data-header-style="elevated"] .nav {
+  background: var(--icc-white);
+  border-bottom: none;
+  box-shadow: var(--shadow-card);
+}
+
+html[data-navbar-style="compact"] { --nav-height: 56px; }
+html[data-navbar-style="centered"] .nav__inner { justify-content: center; gap: 32px; }
+html[data-navbar-style="centered"] .nav__links { margin-inline: auto; }
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+
+html[data-hero-style="centered"] .hero__inner {
+  text-align: center;
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+html[data-hero-style="centered"] .hero__actions { justify-content: center; }
+
+html[data-hero-style="minimal"] .hero { padding-block: calc(var(--section-spacing) * 0.6); }
+html[data-hero-style="minimal"] .hero__panel,
+html[data-hero-style="minimal"] .hero__media { display: none; }
+
+html[data-hero-style="split"] .hero__inner {
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  html[data-hero-style="split"] .hero__inner { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+html[data-footer-style="minimal"] .footer__grid { display: none; }
+html[data-footer-style="minimal"] .footer { padding-block: 28px; }
+
+html[data-footer-style="expanded"] .footer { padding-block: calc(var(--section-spacing) * 0.9); }
+html[data-footer-style="expanded"] .footer__grid { gap: 48px; }
+
+/* ==========================================================================
+   CMS-RENDERED HOMEPAGE SECTIONS
+   --------------------------------------------------------------------------
+   Sections created in the Homepage CMS render through these classes. They
+   reuse the existing tokens rather than introducing a parallel look, so a
+   CMS-authored section sits next to a shipped one without looking pasted in.
+   ========================================================================== */
+
+.cms-section { padding-block: var(--section-spacing); }
+.cms-section__inner {
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.cms-section__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--icc-blue);
+  margin: 0 0 8px;
+}
+.cms-section__title { margin: 0 0 10px; font-size: var(--step-3); }
+.cms-section__subtitle {
+  margin: 0 0 12px;
+  font-size: var(--step-1);
+  color: var(--icc-ink-soft);
+}
+.cms-section__desc { margin: 0 0 20px; max-width: 68ch; }
+.cms-section__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.cms-section__image { margin-top: 24px; border-radius: var(--radius); }
+
+.cms-section--cta {
+  background: var(--icc-blue-tint);
+  border-block: var(--border-width, 1px) solid var(--icc-border-color);
+  text-align: center;
+}
+.cms-section--cta .cms-section__actions { justify-content: center; }
+
+.cms-section--announcements {
+  background: var(--icc-gray-soft);
+}
+
+.cms-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.cms-item {
+  padding: 18px;
+  border-radius: var(--radius);
+  border: var(--border-width, 1px) solid var(--icc-border-color);
+  background: var(--icc-white);
+}
+.cms-item__value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  color: var(--icc-blue);
+  line-height: 1.1;
+}
+.cms-item__label {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--step--1);
+  color: var(--icc-ink-soft);
+}
+
+.cms-section--statistics .cms-item {
+  text-align: center;
+  border: none;
+  background: transparent;
+}
+
+/* ==========================================================================
+   MAINTENANCE / ANNOUNCEMENT BANNER
+   ========================================================================== */
+
+.site-banner {
+  background: var(--icc-blue);
+  color: var(--icc-on-primary);
+  padding: 10px var(--gutter);
+  text-align: center;
+  font-size: var(--step--1);
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   --------------------------------------------------------------------------
+   None of the presets above should override a visitor's stated preference
+   for less movement, so the escape hatch sits here with them.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
