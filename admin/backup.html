@@ -70,11 +70,31 @@
         <p data-i18n="admin_backup_lede">Export a full snapshot of the database, and restore one after a mistake.</p>
       </div>
       <div class="admin-topbar__actions">
+        <button type="button" class="btn btn--outline" data-preview-btn><span data-i18n="backup_preview">Preview</span></button>
         <button type="button" class="btn btn--primary" data-export-btn><span data-i18n="backup_export">Export backup</span></button>
       </div>
     </div>
 
     <div class="admin-content">
+
+      <!-- Import section — MERGE ONLY (adds + updates, never deletes) -->
+      <section class="admin-panel">
+        <div class="admin-panel__head">
+          <h2 data-i18n="backup_import_title">Import (merge)</h2>
+        </div>
+        <div class="admin-panel__body">
+          <p class="hint" data-i18n="backup_import_lede">Adds new records and updates existing ones. Nothing is ever deleted by an import. Duplicates are shown before you confirm.</p>
+          <div class="form-field">
+            <label for="importFile" data-i18n="backup_import_file">Import file</label>
+            <input type="file" id="importFile" accept="application/json,.json" data-import-file>
+          </div>
+          <div data-import-preview hidden></div>
+          <div class="admin-form__actions">
+            <button type="button" class="btn btn--primary" data-import-btn disabled data-i18n="backup_import_run">Import &amp; merge</button>
+          </div>
+        </div>
+      </section>
+
       <section class="admin-panel">
         <div class="admin-panel__head">
           <h2 data-i18n="backup_export_title">Export</h2>

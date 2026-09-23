@@ -49,6 +49,31 @@ import {
  * class so calling UI code can tell "not configured" apart from a real
  * network/permission error and show the right empty/error state.
  */
+
+/**
+ * Merge records into a collection — adds new ids, updates existing ids,
+ * and NEVER deletes. Used by the Import panel.
+ */
+export async function mergeCollection(collectionName, records) {
+  const colRef = collection(db, collectionName);
+  for (const rec of records || []) {
+    if (!rec || !rec.id) continue;
+    const { id, ...body } = rec;
+    await setDoc(doc(colRef, id), body, { merge: true });
+  }
+}
+
+/**
+ * Read every record in a collection as a Map<id, plainObject>, for the
+ * import scan. Read-only; used to classify records as added/updated/
+ * identical before anything is written.
+ */
+export async function fetchCollectionIds(collectionName) {
+  const snap = await getDocs(collection(db, collectionName));
+  const map = new Map();
+  snap.forEach((d) => map.set(d.id, { id: d.id, ...d.data() }));
+  return map;
+}
 export class FirestoreNotConfiguredError extends Error {
   constructor(fnName) {
     super(
