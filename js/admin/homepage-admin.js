@@ -29,8 +29,8 @@
 
 import { protectAdminPage } from "./admin-guard.js";
 import { createCmsController, escapeHTML } from "./cms-admin.js";
-import {
 import { icon } from "../icons.js";
+import {
   CMS_DOCS,
   SECTION_TYPES,
   getSectionType,

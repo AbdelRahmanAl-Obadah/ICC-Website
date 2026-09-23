@@ -10,8 +10,8 @@ import { protectAdminPage } from "./admin-guard.js";
 import { logAction } from "./audit-log.js";
 import { can, ACTIONS } from "../permissions.js";
 import { actionsCellHTML, gateToolbar } from "./academic-shared.js";
-import {
 import { icon } from "../icons.js";
+import {
   getAllRequirements,
   createRequirement,
   updateRequirement,
