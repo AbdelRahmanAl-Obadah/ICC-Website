@@ -275,6 +275,25 @@ select:focus-visible,
   gap: 14px;
 }
 
+.nav__auth {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.nav__link--auth {
+  padding: 8px 12px;
+  border: 1px solid var(--icc-blue);
+  border-radius: var(--radius, 3px);
+  color: var(--icc-blue);
+}
+
+.nav__link--auth:hover {
+  background: var(--icc-blue);
+  color: #fff;
+}
+
 .lang-switch {
   display: flex;
   border: 1px solid var(--icc-gray);
@@ -429,6 +448,19 @@ select:focus-visible,
 /* The mobile menu's language switch is the only one visible under 880px
    (the header one is hidden), so make it a comfortable size. */
 .nav__mobile-foot .lang-switch button { padding: 9px 16px; }
+
+.nav__mobile-auth {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav__auth-link {
+  color: var(--icc-ink-soft);
+  font-weight: 600;
+}
+
+.nav__auth-link:hover { color: var(--icc-blue); }
 
 /* ==========================================================================
    Footer

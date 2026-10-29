@@ -1,4 +1,4 @@
-import { getSubjectById, FirestoreNotConfiguredError } from "./firestore.js";
+import { getSubjectById, getRequirementById, FirestoreNotConfiguredError } from "./firestore.js";
 import { icon } from "./icons.js";
 
 let subject = null;
@@ -27,6 +27,10 @@ function render() {
   const descriptionEl = document.querySelector("[data-subject-description]");
   if (descriptionEl) descriptionEl.textContent = description;
   document.title = `${name} — ICC | JUST`;
+  const crumb = document.querySelector("[data-subject-crumb]");
+  if (crumb) crumb.textContent = subject.type === "requirement"
+    ? t("nav_requirements", lang)
+    : t("major_crumb_majors", lang);
 
   const examLabels = {
     midFinal: ["subject_mid", "subject_final"],
@@ -57,7 +61,9 @@ function render() {
 }
 
 async function init() {
-  const id = new URLSearchParams(window.location.search).get("id");
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const isRequirement = params.get("type") === "requirement";
   const mount = document.querySelector("[data-subject-mount]");
   const lang = window.ICC_I18N.getStoredLang();
   if (!id) {
@@ -65,7 +71,10 @@ async function init() {
     return;
   }
   try {
-    subject = await getSubjectById(id);
+    subject = isRequirement
+      ? await getRequirementById(id)
+      : await getSubjectById(id);
+    if (isRequirement && subject) subject = { ...subject, type: "requirement" };
     if (!subject || subject.active === false) throw new Error("Subject not found");
     render();
   } catch (err) {

@@ -18,6 +18,7 @@
 @media (max-width: 880px) {
   .nav__links { display: none; }
   .nav__actions .lang-switch { display: none; }
+  .nav__actions .nav__auth { display: none; }
   .nav__burger { display: flex; }
 }
 

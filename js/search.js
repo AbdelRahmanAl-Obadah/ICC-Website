@@ -124,7 +124,6 @@ export function resultCount(results) {
    its search functions alone is safe and side-effect-free at import time.
    ========================================================================== */
 
-const CATEGORY_ANCHOR = { "free-elective": "electives", university: "university", college: "college" };
 const CATEGORY_LABEL_KEY = {
   "free-elective": "admin_cat_free_elective",
   university: "admin_cat_university",
@@ -184,8 +183,7 @@ function requirementResultHTML(r, lang, t) {
     .filter(Boolean)
     .map(escapeHTML)
     .join(" · ");
-  const anchor = CATEGORY_ANCHOR[r.category];
-  const href = anchor ? `requirements.html#${anchor}` : "requirements.html";
+  const href = `subject.html?id=${encodeURIComponent(r.id)}&type=requirement`;
   return `
     <a class="search-result" href="${href}">
       <div>

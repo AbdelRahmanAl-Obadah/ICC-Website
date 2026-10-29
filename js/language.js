@@ -149,6 +149,22 @@ const translations = {
     // Nav — new pages
     nav_gpa: "GPA Calculator",
     nav_admins: "ICC Admins",
+    nav_map: "Campus Map",
+
+    // Campus map page
+    map_page_eyebrow: "Campus Map",
+    map_page_title: "Find any building on campus, fast.",
+    map_page_desc: "Search or filter by zone, then click a pin for details. Based on the official JUST campus layout.",
+    map_search_label: "Search buildings",
+    map_search_placeholder: "e.g. Faculty of Engineering",
+    map_filter_label: "Filter by zone",
+    map_results_label: "Results",
+    map_zone_medical: "Medical buildings",
+    map_zone_central: "Central campus",
+    map_zone_engineering: "Engineering buildings",
+    map_zone_services: "Services & parking",
+    map_zone_lake: "Lake",
+    map_disclaimer: "Schematic, not to scale — for orientation only. See the official university map for exact positions.",
     // Burger button label. It changes with the menu's state, so a screen
     // reader announces "Close menu" once the panel is open.
     nav_menu_open: "Open menu",
@@ -165,10 +181,13 @@ const translations = {
     gpa_col_course: "Course",
     gpa_col_hours: "Credit hours",
     gpa_col_grade: "Grade",
+    gpa_course_placeholder: "Course name",
     gpa_add_course: "+ Add course",
     gpa_include_previous: "Include my previous GPA in the calculation",
     gpa_previous_gpa: "Previous cumulative GPA",
+    gpa_previous_gpa_placeholder: "e.g. 3.20",
     gpa_previous_hours: "Previous completed hours",
+    gpa_previous_hours_placeholder: "e.g. 45",
     gpa_result_label: "Your GPA",
     gpa_total_hours: "total credit hours",
     gpa_scale_title: "Grading scale",
@@ -375,7 +394,8 @@ const translations = {
     // PHASE 5 — roles, permissions, accounts, audit
     // ============================================================
 
-    nav_signup: "Sign Up",
+    nav_signin: "Sign in",
+    nav_signup: "Sign up",
 
     // Roles & status
     role_superadmin: "Super Admin",
@@ -1475,6 +1495,22 @@ const translations = {
     // Nav — new pages
     nav_gpa: "حاسبة المعدل",
     nav_admins: "مشرفو ICC",
+    nav_map: "خريطة الحرم الجامعي",
+
+    // Campus map page
+    map_page_eyebrow: "خريطة الحرم الجامعي",
+    map_page_title: "ابحث عن أي مبنى في الحرم الجامعي بسرعة.",
+    map_page_desc: "ابحث أو صفِّ حسب المنطقة، ثم اضغط على أي علامة لمعرفة التفاصيل. مبنية على المخطط الرسمي لحرم الجامعة.",
+    map_search_label: "ابحث عن مبنى",
+    map_search_placeholder: "مثال: كلية الهندسة",
+    map_filter_label: "تصفية حسب المنطقة",
+    map_results_label: "النتائج",
+    map_zone_medical: "المباني الطبية",
+    map_zone_central: "الحرم المركزي",
+    map_zone_engineering: "المباني الهندسية",
+    map_zone_services: "الخدمات والمواقف",
+    map_zone_lake: "البحيرة",
+    map_disclaimer: "مخطط تقريبي غير مطابق للمقياس — للتوجيه فقط. راجع الخريطة الرسمية للجامعة لمعرفة المواقع بدقة.",
     nav_menu_open: "فتح القائمة",
     nav_menu_close: "إغلاق القائمة",
     gpa_remove_course: "حذف المادة",
@@ -1489,10 +1525,13 @@ const translations = {
     gpa_col_course: "المادة",
     gpa_col_hours: "الساعات المعتمدة",
     gpa_col_grade: "العلامة",
+    gpa_course_placeholder: "اسم المادة",
     gpa_add_course: "+ إضافة مادة",
     gpa_include_previous: "أضف معدلي التراكمي السابق إلى الحساب",
     gpa_previous_gpa: "المعدل التراكمي السابق",
+    gpa_previous_gpa_placeholder: "مثال: 3.20",
     gpa_previous_hours: "الساعات المنجزة سابقًا",
+    gpa_previous_hours_placeholder: "مثال: 45",
     gpa_result_label: "معدلك",
     gpa_total_hours: "إجمالي الساعات المعتمدة",
     gpa_scale_title: "سلّم العلامات",
@@ -1699,6 +1738,7 @@ const translations = {
     // PHASE 5 — الأدوار والصلاحيات والحسابات وسجل النشاط
     // ============================================================
 
+    nav_signin: "تسجيل الدخول",
     nav_signup: "إنشاء حساب",
 
     role_superadmin: "مشرف عام",

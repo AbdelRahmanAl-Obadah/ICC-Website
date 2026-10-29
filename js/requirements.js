@@ -39,18 +39,27 @@ function stateHTML(kind, lang, { title, body } = {}) {
 function requirementRowHTML(req, lang) {
   const t = window.ICC_I18N.t;
   const name = req.name?.[lang] || req.name?.en || req.code || "";
-  const link = req.courseUrl
-    ? `<a href="${req.courseUrl}" target="_blank" rel="noopener">${name}</a>`
-    : name;
+  const detailsUrl = `subject.html?id=${encodeURIComponent(req.id)}&type=requirement`;
+  const safeCourseUrl = (() => {
+    try {
+      const url = new URL(req.courseUrl);
+      return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    } catch { return ""; }
+  })();
   const metaParts = [req.code, req.creditHours != null ? `${req.creditHours} ${t("credit_hours", lang)}` : null].filter(
     Boolean
   );
   return `
     <div class="requirement-row">
-      <span class="requirement-row__name">${link}</span>
+      <span class="requirement-row__name"><a href="${detailsUrl}">${escapeHTML(name)}</a></span>
       <span class="requirement-row__meta">${metaParts.join(" · ")}</span>
+      ${safeCourseUrl ? `<a href="${escapeHTML(safeCourseUrl)}" target="_blank" rel="noopener noreferrer">${t("course_link", lang)}</a>` : ""}
     </div>
   `;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>\'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
 }
 
 async function renderCategory({ key, mount }) {

@@ -145,6 +145,55 @@ function renderFooterNav(language) {
   });
 }
 
+function renderAuthLinks(language) {
+  const labels = [
+    { href: "admin/login.html", key: "nav_signin", fallback: "Sign in" },
+    { href: "signup.html", key: "nav_signup", fallback: "Sign up" },
+  ];
+  const t = (key, fallback) =>
+    (window.ICC_I18N && window.ICC_I18N.t(key, language)) || fallback;
+  const makeLink = ({ href, key, fallback }, className) => {
+    const link = el("a", className, t(key, fallback));
+    link.href = href;
+    link.setAttribute("data-i18n", key);
+    link.setAttribute("data-auth-link", href);
+    return link;
+  };
+
+  const actions = document.querySelector(".nav__actions");
+  if (actions && !actions.querySelector(".nav__auth")) {
+    const auth = el("div", "nav__auth");
+    labels.forEach((item, index) => {
+      auth.appendChild(makeLink(item, index === 1 ? "nav__link nav__link--auth" : "nav__link"));
+    });
+    const burger = actions.querySelector("[data-nav-burger]");
+    actions.insertBefore(auth, burger);
+  }
+
+  const mobileFoot = document.querySelector(".nav__mobile-foot");
+  if (mobileFoot && !mobileFoot.querySelector(".nav__mobile-auth")) {
+    const auth = el("div", "nav__mobile-auth");
+    labels.forEach((item) => auth.appendChild(makeLink(item, "nav__auth-link")));
+    mobileFoot.appendChild(auth);
+  }
+
+  document.querySelectorAll("[data-cms-footer-nav]").forEach((container) => {
+    container.querySelectorAll("[data-auth-link]").forEach((link) => link.closest("li")?.remove());
+    container.querySelectorAll("a[href]").forEach((link) => {
+      const path = new URL(link.href, window.location.href).pathname;
+      if (path.endsWith("/signup.html") || path.endsWith("/admin/login.html")) {
+        link.closest("li")?.remove();
+      }
+    });
+
+    labels.forEach((item) => {
+      const row = el("li");
+      row.appendChild(makeLink(item, ""));
+      container.appendChild(row);
+    });
+  });
+}
+
 /* ==========================================================================
    HOMEPAGE SECTIONS
    ========================================================================== */
@@ -278,6 +327,7 @@ function renderAll() {
   const language = currentLang();
   renderNav(language);
   renderFooterNav(language);
+  renderAuthLinks(language);
   renderHomepage(language);
 }
 

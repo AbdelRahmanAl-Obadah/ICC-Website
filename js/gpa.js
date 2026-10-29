@@ -57,11 +57,12 @@ function createRow() {
   row.className = "gpa-row";
   row.dataset.rowId = String(rowId);
 
+  const lang = window.ICC_I18N?.getStoredLang?.() || "en";
   row.innerHTML = `
     <div class="gpa-row__main">
       <div class="gpa-field gpa-field--course">
         <label data-i18n="gpa_col_course">Course</label>
-        <input type="text" data-gpa-course-name placeholder="Course name">
+        <input type="text" data-gpa-course-name placeholder="${lang === "ar" ? "اسم المادة" : "Course name"}" data-i18n-attr="placeholder:gpa_course_placeholder">
       </div>
       <div class="gpa-field gpa-field--hours">
         <label data-i18n="gpa_col_hours">Credit hours</label>
@@ -87,6 +88,16 @@ function createRow() {
       </div>
     </div>
   `;
+  if (window.ICC_I18N) {
+    const t = window.ICC_I18N.t;
+    row.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n, lang); });
+    row.querySelectorAll("[data-i18n-attr]").forEach((el) => {
+      el.dataset.i18nAttr.split(",").forEach((pair) => {
+        const [attr, key] = pair.split(":").map((part) => part.trim());
+        if (attr && key) el.setAttribute(attr, t(key, lang));
+      });
+    });
+  }
   return row;
 }
 
@@ -183,6 +194,19 @@ function renderScaleTable() {
   ).join("");
 }
 
+function rerenderDynamicTranslations() {
+  const lang = window.ICC_I18N?.getStoredLang?.() || "en";
+  const t = window.ICC_I18N?.t;
+  if (!t) return;
+  document.querySelectorAll(".gpa-row [data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n, lang); });
+  document.querySelectorAll(".gpa-row [data-i18n-attr]").forEach((el) => {
+    el.dataset.i18nAttr.split(",").forEach((pair) => {
+      const [attr, key] = pair.split(":").map((part) => part.trim());
+      if (attr && key) el.setAttribute(attr, t(key, lang));
+    });
+  });
+}
+
 function initCumulativeToggle() {
   const toggle = document.querySelector("[data-gpa-cumulative-toggle]");
   const fields = document.querySelector("[data-gpa-cumulative-fields]");
@@ -209,3 +233,5 @@ document.addEventListener("DOMContentLoaded", () => {
   addRow();
   addRow();
 });
+
+document.addEventListener("icc:languagechange", rerenderDynamicTranslations);
