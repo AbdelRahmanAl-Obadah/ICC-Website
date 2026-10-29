@@ -183,7 +183,7 @@ function requirementResultHTML(r, lang, t) {
     .filter(Boolean)
     .map(escapeHTML)
     .join(" · ");
-  const href = `subject.html?id=${encodeURIComponent(r.id)}&type=requirement`;
+  const href = `requirement.html?id=${encodeURIComponent(r.id)}`;
   return `
     <a class="search-result" href="${href}">
       <div>

@@ -39,7 +39,7 @@ function stateHTML(kind, lang, { title, body } = {}) {
 function requirementRowHTML(req, lang) {
   const t = window.ICC_I18N.t;
   const name = req.name?.[lang] || req.name?.en || req.code || "";
-  const detailsUrl = `subject.html?id=${encodeURIComponent(req.id)}&type=requirement`;
+  const detailsUrl = `requirement.html?id=${encodeURIComponent(req.id)}`;
   const safeCourseUrl = (() => {
     try {
       const url = new URL(req.courseUrl);
