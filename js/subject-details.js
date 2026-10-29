@@ -1,7 +1,8 @@
-import { getSubjectById, getRequirements, FirestoreNotConfiguredError } from "./firestore.js";
+import { getSubjectById, getRequirements, getActiveSubjects, getActiveMajors, FirestoreNotConfiguredError } from "./firestore.js";
 import { icon } from "./icons.js";
 
 let subject = null;
+let sharedMajors = [];
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
@@ -14,6 +15,10 @@ function safeExternalUrl(value) {
   } catch {
     return "";
   }
+}
+
+function normalizedCode(value) {
+  return String(value ?? "").trim().toLowerCase();
 }
 
 function render() {
@@ -43,6 +48,9 @@ function render() {
     return href ? `<a class="resource-link" href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer"><span>${t(labelKey, lang)}</span>${icon("external-link")}</a>` : "";
   }).join("");
   const courseUrl = safeExternalUrl(subject.courseUrl);
+  const sharedMajorsHTML = sharedMajors.length > 1
+    ? `<section class="resource-section subject-shared-majors"><div class="section-head"><h2>${t("subject_shared_majors_title", lang)}</h2><p>${t("subject_shared_majors_desc", lang)}</p></div><div class="resource-grid">${sharedMajors.map((major) => `<a class="resource-link" href="major.html?id=${encodeURIComponent(major.id)}">${escapeHTML(major.name?.[lang] || major.name?.en || major.code || major.id)}</a>`).join("")}</div></section>`
+    : "";
   const mount = document.querySelector("[data-subject-mount]");
   if (!mount) return;
   mount.innerHTML = `
@@ -57,24 +65,48 @@ function render() {
         <div class="resource-grid">${resources || `<p class="state__body">${t("subject_resources_empty", lang)}</p>`}</div>
       </section>
       ${courseUrl ? `<a class="btn btn--outline" href="${escapeHTML(courseUrl)}" target="_blank" rel="noopener noreferrer">${t("course_link", lang)} ${icon("external-link")}</a>` : ""}
+      ${sharedMajorsHTML}
     </div>`;
 }
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
+  const code = params.get("code")?.trim() || "";
   const isRequirement = params.get("type") === "requirement";
   const mount = document.querySelector("[data-subject-mount]");
   const lang = window.ICC_I18N.getStoredLang();
-  if (!id) {
+  if (!id && !code) {
     mount.innerHTML = `<div class="state state--error"><strong>${window.ICC_I18N.t("subject_not_found_title", lang)}</strong><p>${window.ICC_I18N.t("subject_not_found_body", lang)}</p></div>`;
     return;
   }
   try {
-    subject = isRequirement
-      ? (await getRequirements()).find((item) => item.id === id) || null
-      : await getSubjectById(id);
-    if (isRequirement && subject) subject = { ...subject, type: "requirement" };
+    if (isRequirement) {
+      subject = (await getRequirements()).find((item) => item.id === id) || null;
+      if (subject) subject = { ...subject, type: "requirement" };
+    } else {
+      let allSubjects = null;
+      if (code) {
+        allSubjects = await getActiveSubjects();
+        subject = allSubjects.find((item) => normalizedCode(item.code) === normalizedCode(code)) || null;
+      } else {
+        subject = await getSubjectById(id);
+      }
+      const subjectCode = subject?.code || code;
+      if (subjectCode) {
+        try {
+          const [subjects, majors] = await Promise.all([allSubjects || getActiveSubjects(), getActiveMajors()]);
+          const majorIds = new Set(subjects
+            .filter((item) => normalizedCode(item.code) === normalizedCode(subjectCode))
+            .map((item) => item.majorId)
+            .filter(Boolean));
+          sharedMajors = [...majorIds].map((majorId) => majors.find((major) => major.id === majorId)).filter(Boolean);
+        } catch (sharingError) {
+          console.warn("[ICC] Could not load shared-major information:", sharingError);
+          sharedMajors = [];
+        }
+      }
+    }
     if (!subject || subject.active === false) throw new Error("Subject not found");
     render();
   } catch (err) {

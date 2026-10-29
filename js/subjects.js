@@ -49,7 +49,10 @@ function subjectCardHTML(subject, lang) {
   const name = subject.name?.[lang] || subject.name?.en || subject.code || "";
   const prereq = subject.prerequisite?.[lang] || subject.prerequisite?.en || "";
   const description = subject.description?.[lang] || subject.description?.en || "";
-  const detailsLink = `<a class="subject-card__link icon-text" href="subject.html?id=${encodeURIComponent(subject.id)}">${t(
+  const subjectUrl = subject.code
+    ? `subject.html?code=${encodeURIComponent(subject.code)}`
+    : `subject.html?id=${encodeURIComponent(subject.id)}`;
+  const detailsLink = `<a class="subject-card__link icon-text" href="${subjectUrl}">${t(
     "subject_view_details",
     lang
   )}${icon("arrow-right")}</a>`;
@@ -61,7 +64,7 @@ function subjectCardHTML(subject, lang) {
     : "";
 
   return `
-    <div class="subject-card" role="link" tabindex="0" data-subject-href="subject.html?id=${encodeURIComponent(subject.id)}">
+    <div class="subject-card" role="link" tabindex="0" data-subject-href="${subjectUrl}">
       <div class="subject-card__top">
         <div>
           ${subject.code ? `<div class="subject-card__code">${subject.code}</div>` : ""}

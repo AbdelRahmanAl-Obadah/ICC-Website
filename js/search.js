@@ -164,7 +164,9 @@ function subjectResultHTML(s, lang, t) {
   const meta = [s.code, s.creditHours != null ? `${s.creditHours} ${t("credit_hours", lang)}` : null, majorName]
     .filter(Boolean)
     .join(" · ");
-  const href = `subject.html?id=${encodeURIComponent(s.id)}`;
+  const href = s.code
+    ? `subject.html?code=${encodeURIComponent(s.code)}`
+    : `subject.html?id=${encodeURIComponent(s.id)}`;
   return `
     <a class="search-result" href="${href}">
       <div>

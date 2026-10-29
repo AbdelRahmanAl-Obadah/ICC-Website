@@ -529,6 +529,11 @@ export async function deletePublicAdmin(id) {
    ========================================================================== */
 
 /** Fetch every active requirement, sorted by displayOrder. */
+function isExcludedPartnerRequirement(requirement) {
+  // The removed partner entries use the legacy GH-* requirement code family.
+  return /^GH-/i.test(String(requirement?.code || "").trim());
+}
+
 export async function getRequirements() {
   const dbRef = requireDb("getRequirements");
   const q = query(
@@ -537,7 +542,7 @@ export async function getRequirements() {
     orderBy("displayOrder", "asc")
   );
   const snap = await getDocs(q);
-  return snapshotToArray(snap);
+  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
 }
 
 /**
@@ -553,7 +558,7 @@ export async function getRequirementsByCategory(category) {
     orderBy("displayOrder", "asc")
   );
   const snap = await getDocs(q);
-  return snapshotToArray(snap);
+  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
 }
 
 /** ADMIN: fetch every requirement (any active state), sorted by displayOrder. */
@@ -561,7 +566,7 @@ export async function getAllRequirements() {
   const dbRef = requireDb("getAllRequirements");
   const q = query(collection(dbRef, "requirements"), orderBy("displayOrder", "asc"));
   const snap = await getDocs(q);
-  return snapshotToArray(snap);
+  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
 }
 
 /** ADMIN: create a new requirement document. */
