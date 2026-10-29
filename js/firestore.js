@@ -556,15 +556,6 @@ export async function getRequirementsByCategory(category) {
   return snapshotToArray(snap);
 }
 
-/** Fetch a single active requirement for the shared subject detail page. */
-export async function getRequirementById(requirementId) {
-  const dbRef = requireDb("getRequirementById");
-  if (!requirementId) return null;
-  const snap = await getDoc(doc(dbRef, "requirements", requirementId));
-  if (!snap.exists() || snap.data()?.active !== true) return null;
-  return { id: snap.id, ...snap.data() };
-}
-
 /** ADMIN: fetch every requirement (any active state), sorted by displayOrder. */
 export async function getAllRequirements() {
   const dbRef = requireDb("getAllRequirements");

@@ -1,4 +1,4 @@
-import { getSubjectById, getRequirementById, FirestoreNotConfiguredError } from "./firestore.js";
+import { getSubjectById, getRequirements, FirestoreNotConfiguredError } from "./firestore.js";
 import { icon } from "./icons.js";
 
 let subject = null;
@@ -72,7 +72,7 @@ async function init() {
   }
   try {
     subject = isRequirement
-      ? await getRequirementById(id)
+      ? (await getRequirements()).find((item) => item.id === id) || null
       : await getSubjectById(id);
     if (isRequirement && subject) subject = { ...subject, type: "requirement" };
     if (!subject || subject.active === false) throw new Error("Subject not found");

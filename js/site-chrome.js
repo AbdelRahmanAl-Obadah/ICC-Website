@@ -50,6 +50,9 @@ function linkFrom(item, className, language) {
   const href = safeUrl(item.url);
   const label = localize(item.label, language);
   if (!href || !label) return null;
+  // The campus map remains directly accessible, but is intentionally omitted
+  // from the site's shared navigation menus.
+  if (new URL(href, window.location.href).pathname.endsWith("/campus-map.html")) return null;
 
   const a = el("a", className, label);
   a.href = href;
