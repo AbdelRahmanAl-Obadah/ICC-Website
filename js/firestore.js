@@ -41,6 +41,7 @@ import {
   startAfter,
   writeBatch,
   serverTimestamp,
+  Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /**
@@ -529,11 +530,6 @@ export async function deletePublicAdmin(id) {
    ========================================================================== */
 
 /** Fetch every active requirement, sorted by displayOrder. */
-function isExcludedPartnerRequirement(requirement) {
-  // The removed partner entries use the legacy GH-* requirement code family.
-  return /^GH-/i.test(String(requirement?.code || "").trim());
-}
-
 export async function getRequirements() {
   const dbRef = requireDb("getRequirements");
   const q = query(
@@ -542,7 +538,7 @@ export async function getRequirements() {
     orderBy("displayOrder", "asc")
   );
   const snap = await getDocs(q);
-  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
+  return snapshotToArray(snap);
 }
 
 /**
@@ -558,7 +554,7 @@ export async function getRequirementsByCategory(category) {
     orderBy("displayOrder", "asc")
   );
   const snap = await getDocs(q);
-  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
+  return snapshotToArray(snap);
 }
 
 /** ADMIN: fetch every requirement (any active state), sorted by displayOrder. */
@@ -566,7 +562,7 @@ export async function getAllRequirements() {
   const dbRef = requireDb("getAllRequirements");
   const q = query(collection(dbRef, "requirements"), orderBy("displayOrder", "asc"));
   const snap = await getDocs(q);
-  return snapshotToArray(snap).filter((requirement) => !isExcludedPartnerRequirement(requirement));
+  return snapshotToArray(snap);
 }
 
 /** ADMIN: create a new requirement document. */
@@ -1531,20 +1527,75 @@ export async function dumpCollection(collectionName) {
 }
 
 /**
- * Write documents back from a backup archive, preserving their original
- * IDs. Goes through the normal security rules, so a restore can only write
- * what the operator is authorized to write.
+ * Replace a collection with records from a backup archive, preserving
+ * their IDs and restoring Firestore timestamps serialized to JSON.
  */
 export async function restoreCollection(collectionName, records) {
   const dbRef = requireDb("restoreCollection");
-  for (let i = 0; i < records.length; i += BATCH_LIMIT) {
+  if (!Array.isArray(records)) {
+    throw new TypeError(`Restore data for "${collectionName}" must be an array.`);
+  }
+
+  const restoredRecords = records.map((record, index) => {
+    if (
+      !record ||
+      typeof record.id !== "string" ||
+      !record.id.trim() ||
+      record.id.includes("/")
+    ) {
+      throw new TypeError(`Invalid document ID in "${collectionName}" at record ${index + 1}.`);
+    }
+
+    return restoreSerializedValues(record);
+  });
+  const restoredIds = new Set(restoredRecords.map(({ id }) => id));
+
+  for (let i = 0; i < restoredRecords.length; i += BATCH_LIMIT) {
     const batch = writeBatch(dbRef);
-    records.slice(i, i + BATCH_LIMIT).forEach((rec) => {
+    restoredRecords.slice(i, i + BATCH_LIMIT).forEach((rec) => {
       const { id, ...data } = rec;
       batch.set(doc(dbRef, collectionName, id), { ...data, updatedAt: serverTimestamp() });
     });
     await batch.commit();
   }
+
+  const current = await getDocs(collection(dbRef, collectionName));
+  const staleIds = current.docs
+    .map((snapshot) => snapshot.id)
+    .filter((id) => !restoredIds.has(id));
+  for (let i = 0; i < staleIds.length; i += BATCH_LIMIT) {
+    const batch = writeBatch(dbRef);
+    staleIds.slice(i, i + BATCH_LIMIT).forEach((id) => {
+      batch.delete(doc(dbRef, collectionName, id));
+    });
+    await batch.commit();
+  }
+}
+
+function restoreSerializedValues(value) {
+  if (Array.isArray(value)) return value.map(restoreSerializedValues);
+  if (!value || typeof value !== "object") return value;
+
+  const keys = Object.keys(value).sort();
+  const hasTimestampShape =
+    (keys.join(",") === "nanoseconds,seconds" ||
+      (keys.join(",") === "nanoseconds,seconds,type" &&
+        value.type === "firestore/timestamp/1.0")) &&
+    Number.isInteger(value.seconds) &&
+    Number.isInteger(value.nanoseconds) &&
+    value.nanoseconds >= 0 &&
+    value.nanoseconds < 1_000_000_000;
+
+  if (hasTimestampShape) {
+    return new Timestamp(value.seconds, value.nanoseconds);
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, nestedValue]) => [
+      key,
+      restoreSerializedValues(nestedValue),
+    ])
+  );
 }
 
 /** Record that a backup was taken (the archive itself never lands here). */
